@@ -1,0 +1,28 @@
+server:
+    port: ${PORT:9000}
+    servlet:
+        context-path: /api/v1
+
+spring:
+    datasource:
+        driver-class-name: org.mariadb.jdbc.Driver
+        url: jdbc:mariadb://${DATABASE_HOST:localhost}:${DATABASE_PORT:3306}/food
+        username: root
+        password: root
+    jpa:
+        show-sql: true
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+                ddl-auto: validate
+    flyway:
+        enabled: true
+        sql-migration-prefix:
+        baseline-on-migrate: true
+
+    security:
+        jwt:
+            token:
+                secret: secret-key
+                expiration: 60
+                realm: food
