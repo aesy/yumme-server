@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+    recipe:
+        container_name: recipe
+        build: .
+        links:
+        - mariadb
+        depends_on:
+        - mariadb
+    mariadb:
+        container_name: mariadb
+        image: mariadb:latest
+        environment:
+        - MYSQL_DATABASE=food
+        - MYSQL_ROOT_PASSWORD=postgres
+        volumes:
+        - mariadb_data:/var/lib/mysql
+
+volumes:
+    mariadb_data:
