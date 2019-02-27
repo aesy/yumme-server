@@ -1,6 +1,5 @@
 package io.aesy.food.conversion
 
-import io.aesy.food.dto.Dto
 import org.modelmapper.ModelMapper
 import org.springframework.core.MethodParameter
 import org.springframework.data.domain.Page
@@ -13,15 +12,18 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.servlet.mvc.method.annotation.AbstractMappingJacksonResponseBodyAdvice
 
 @ControllerAdvice
-class DtoResponseBodyMapperAdvice(
-    private val modelMapper: ModelMapper
+class ResponseBodyMapperAdvice(
+    private val mapper: ModelMapper
 ): AbstractMappingJacksonResponseBodyAdvice() {
-    override fun supports(returnType: MethodParameter, converterType: Class<out HttpMessageConverter<*>>): Boolean {
+    override fun supports(
+        returnType: MethodParameter,
+        converterType: Class<out HttpMessageConverter<*>>
+    ): Boolean {
         if (!super.supports(returnType, converterType)) {
             return false
         }
 
-        return returnType.hasMethodAnnotation(Dto::class.java)
+        return returnType.hasMethodAnnotation(ResponseBodyType::class.java)
     }
 
     override fun beforeBodyWriteInternal(
@@ -32,18 +34,18 @@ class DtoResponseBodyMapperAdvice(
         response: ServerHttpResponse
     ) {
         val value = bodyContainer.value
-        val annotation = returnType.getMethodAnnotation(Dto::class.java)
+        val annotation = returnType.getMethodAnnotation(ResponseBodyType::class.java)
         val type = annotation?.type?.java
-                   ?: return
+            ?: return
 
         bodyContainer.value = when (value) {
-            is Page<*> -> value.map { it ->
-                modelMapper.map(it, type)
+            is Page<*> -> value.map {
+                mapper.map(it, type)
             }
-            is Collection<*> -> value.map { it ->
-                modelMapper.map(it, type)
+            is Collection<*> -> value.map {
+                mapper.map(it, type)
             }
-            else -> modelMapper.map(value, type)
+            else -> mapper.map(value, type)
         }
     }
 }

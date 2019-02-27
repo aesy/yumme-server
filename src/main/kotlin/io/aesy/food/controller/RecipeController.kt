@@ -1,6 +1,6 @@
 package io.aesy.food.controller
 
-import io.aesy.food.dto.Dto
+import io.aesy.food.conversion.ResponseBodyType
 import io.aesy.food.dto.RecipeDto
 import io.aesy.food.entity.Recipe
 import io.aesy.food.exception.ResourceNotFound
@@ -21,7 +21,7 @@ class RecipeController(
 ) {
     @GetMapping("/recent")
     @Transactional
-    @Dto(type = RecipeDto::class)
+    @ResponseBodyType(type = RecipeDto::class)
     fun recent(
         @RequestParam(required = false, defaultValue = "10") limit: Int
     ): List<Recipe> {
@@ -36,7 +36,7 @@ class RecipeController(
 
     @GetMapping("/popular")
     @Transactional
-    @Dto(type = RecipeDto::class)
+    @ResponseBodyType(type = RecipeDto::class)
     fun popular(
         @RequestParam(required = false, defaultValue = "10") limit: Int
     ): List<Recipe> {
@@ -53,7 +53,7 @@ class RecipeController(
 
     @GetMapping
     @Transactional
-    @Dto(type = RecipeDto::class)
+    @ResponseBodyType(type = RecipeDto::class)
     fun getAllRecipes(
         @CookieValue("access_token", required = false) token: String?
     ): List<Recipe> {
@@ -64,7 +64,7 @@ class RecipeController(
 
     @GetMapping("{id}")
     @Transactional
-    @Dto(type = RecipeDto::class)
+    @ResponseBodyType(type = RecipeDto::class)
     fun getRecipeByUuid(
         @PathVariable("id") id: Int
     ): Recipe {

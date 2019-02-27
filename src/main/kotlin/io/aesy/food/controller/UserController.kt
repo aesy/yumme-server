@@ -1,8 +1,8 @@
 package io.aesy.food.controller
 
-import io.aesy.food.auth.JwtService
 import io.aesy.food.auth.AuthorizedUser
-import io.aesy.food.dto.Dto
+import io.aesy.food.auth.JwtService
+import io.aesy.food.conversion.ResponseBodyType
 import io.aesy.food.dto.UserDto
 import io.aesy.food.entity.User
 import io.aesy.food.exception.UserAlreadyPresent
@@ -30,7 +30,7 @@ class UserController(
     @GetMapping("/me")
     @ResponseStatus(HttpStatus.OK)
     @Transactional
-    @Dto(type = UserDto::class)
+    @ResponseBodyType(type = UserDto::class)
     fun me(@AuthorizedUser user: User): User {
         return user
     }
