@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*
 import javax.transaction.Transactional
 import javax.validation.Valid
 
-
 @RestController
 @RequestMapping("auth")
 class AuthController(
@@ -32,7 +31,6 @@ class AuthController(
 
         return authService.createToken(user)
     }
-
 
     @PostMapping("/refresh_token")
     @ResponseStatus(HttpStatus.NO_CONTENT)
