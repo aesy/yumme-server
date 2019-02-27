@@ -1,35 +1,25 @@
 package io.aesy.food.config
 
-import io.aesy.food.dto.RatingDto
-import io.aesy.food.dto.RecipeDto
-import io.aesy.food.entity.Recipe
+import io.aesy.food.conversion.MapperConfigurer
 import org.modelmapper.ModelMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
-
 @Configuration
-class ModelMapperConfiguration {
+class ModelMapperConfiguration(
+    private val configurers: List<MapperConfigurer>
+) {
     @Bean
     fun modelMapper(): ModelMapper {
-        val modelMapper = ModelMapper()
+        val mapper = ModelMapper().apply {
+            configuration.fieldAccessLevel = org.modelmapper.config.Configuration.AccessLevel.PRIVATE
+            configuration.isFieldMatchingEnabled = true
+        }
 
-        modelMapper.createTypeMap(Recipe::class.java, RecipeDto::class.java)
-                   .setPostConverter { context ->
-                       val source = context.source.ratings
-                       val average = source
-                           .asSequence()
-                           .map { it.score }
-                           .average()
-                       val precision = 2
-                       val pow = Math.pow(10.0, precision.toDouble())
-                       val formattedAverage = Math.round(average * pow) / pow
+        for (configurer in configurers) {
+            configurer.configure(mapper)
+        }
 
-                       context.destination.apply {
-                           ratings = RatingDto(formattedAverage, source.size)
-                       }
-                   }
-
-        return modelMapper
+        return mapper
     }
 }
