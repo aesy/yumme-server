@@ -1,12 +1,11 @@
-package io.aesy.food.config
+package io.aesy.food.conversion
 
-import io.aesy.food.conversion.MapperConfigurer
 import org.modelmapper.ModelMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class ModelMapperConfiguration(
+class MapperConfiguration(
     private val configurers: List<MapperConfigurer>
 ) {
     @Bean

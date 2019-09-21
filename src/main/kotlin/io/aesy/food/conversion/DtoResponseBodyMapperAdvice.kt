@@ -2,6 +2,7 @@ package io.aesy.food.conversion
 
 import org.modelmapper.ModelMapper
 import org.springframework.core.MethodParameter
+import org.springframework.core.annotation.Order
 import org.springframework.data.domain.Page
 import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageConverter
@@ -12,7 +13,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.servlet.mvc.method.annotation.AbstractMappingJacksonResponseBodyAdvice
 
 @ControllerAdvice
-class ResponseBodyMapperAdvice(
+@Order(Int.MAX_VALUE - 1)
+class DtoResponseBodyMapperAdvice(
     private val mapper: ModelMapper
 ): AbstractMappingJacksonResponseBodyAdvice() {
     override fun supports(
@@ -36,7 +38,7 @@ class ResponseBodyMapperAdvice(
         val value = bodyContainer.value
         val annotation = returnType.getMethodAnnotation(ResponseBodyType::class.java)
         val type = annotation?.type?.java
-            ?: return
+                   ?: return
 
         bodyContainer.value = when (value) {
             is Page<*> -> value.map {
