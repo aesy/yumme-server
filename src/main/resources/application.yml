@@ -6,7 +6,7 @@ server:
 spring:
     datasource:
         driver-class-name: org.mariadb.jdbc.Driver
-        url: jdbc:mariadb://${DATABASE_HOST:localhost}:${DATABASE_PORT:3306}/food
+        url: jdbc:mariadb://${DATABASE_HOST:localhost}:${DATABASE_PORT:3306}/yumme
         username: root
         password: root
     jpa:
@@ -25,4 +25,4 @@ spring:
             token:
                 secret: secret-key
                 expiration: 60
-                realm: food
+                realm: yumme

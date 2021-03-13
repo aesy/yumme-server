@@ -12,7 +12,7 @@ services:
         container_name: mariadb
         image: mariadb:latest
         environment:
-        - MYSQL_DATABASE=food
+        - MYSQL_DATABASE=yumme
         - MYSQL_ROOT_PASSWORD=postgres
         volumes:
         - mariadb_data:/var/lib/mysql
