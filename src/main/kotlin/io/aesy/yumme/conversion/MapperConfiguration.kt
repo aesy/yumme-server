@@ -11,7 +11,6 @@ class MapperConfiguration(
     @Bean
     fun modelMapper(): ModelMapper {
         val mapper = ModelMapper().apply {
-            configuration.fieldAccessLevel = org.modelmapper.config.Configuration.AccessLevel.PRIVATE
             configuration.isFieldMatchingEnabled = true
         }
 
