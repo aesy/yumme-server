@@ -6,7 +6,7 @@ import io.aesy.yumme.entity.Category
 import io.aesy.yumme.exception.ResourceNotFound
 import io.aesy.yumme.service.CategoryService
 import io.aesy.yumme.service.RecipeService
-import org.slf4j.LoggerFactory
+import io.aesy.yumme.util.getLogger
 import org.springframework.web.bind.annotation.*
 import javax.transaction.Transactional
 
@@ -16,7 +16,7 @@ class CategoryController(
     private val categoryService: CategoryService
 ) {
     companion object {
-        private val logger = LoggerFactory.getLogger(CategoryController::class.java)
+        private val logger = getLogger()
     }
 
     @GetMapping("/category")

@@ -4,7 +4,7 @@ import io.aesy.yumme.conversion.ResponseBodyType
 import io.aesy.yumme.dto.CollectionDto
 import io.aesy.yumme.entity.Collection
 import io.aesy.yumme.repository.CollectionRepository
-import org.slf4j.LoggerFactory
+import io.aesy.yumme.util.getLogger
 import org.springframework.web.bind.annotation.*
 import javax.transaction.Transactional
 
@@ -13,7 +13,7 @@ class CollectionController(
     val collectionRepository: CollectionRepository
 ) {
     companion object {
-        private val logger = LoggerFactory.getLogger(CollectionController::class.java)
+        private val logger = getLogger()
     }
 
     @GetMapping("collection")

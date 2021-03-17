@@ -1,8 +1,8 @@
 package io.aesy.yumme.auth
 
 import io.aesy.yumme.entity.User
+import io.aesy.yumme.util.getLogger
 import org.apache.shiro.SecurityUtils
-import org.slf4j.LoggerFactory
 import org.springframework.core.MethodParameter
 import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.context.request.NativeWebRequest
@@ -11,7 +11,7 @@ import org.springframework.web.method.support.ModelAndViewContainer
 
 class AuthorizedUserArgumentResolver: HandlerMethodArgumentResolver {
     companion object {
-        private val logger = LoggerFactory.getLogger(AuthorizedUserArgumentResolver::class.java)
+        private val logger = getLogger()
     }
 
     override fun supportsParameter(parameter: MethodParameter): Boolean {

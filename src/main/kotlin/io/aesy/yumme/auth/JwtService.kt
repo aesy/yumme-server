@@ -5,8 +5,8 @@ import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTDecodeException
 import io.aesy.yumme.entity.User
 import io.aesy.yumme.service.UserService
+import io.aesy.yumme.util.getLogger
 import org.apache.shiro.codec.Base64
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.Instant
@@ -14,13 +14,12 @@ import java.time.temporal.ChronoUnit
 import java.util.*
 import javax.annotation.PostConstruct
 
-
 @Service
 class JwtService(
     private val userService: UserService
 ) {
     companion object {
-        private val logger = LoggerFactory.getLogger(JwtService::class.java)
+        private val logger = getLogger()
     }
 
     @Value("\${spring.security.jwt.token.secret}")

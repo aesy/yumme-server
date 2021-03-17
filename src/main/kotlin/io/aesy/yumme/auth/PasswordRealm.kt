@@ -1,12 +1,12 @@
 package io.aesy.yumme.auth
 
 import io.aesy.yumme.service.UserService
+import io.aesy.yumme.util.getLogger
 import org.apache.shiro.authc.*
 import org.apache.shiro.authz.AuthorizationInfo
 import org.apache.shiro.authz.SimpleAuthorizationInfo
 import org.apache.shiro.realm.AuthorizingRealm
 import org.apache.shiro.subject.PrincipalCollection
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
@@ -15,7 +15,7 @@ class PasswordRealm(
     private val userService: UserService
 ): AuthorizingRealm() {
     companion object {
-        private val logger = LoggerFactory.getLogger(PasswordRealm::class.java)
+        private val logger = getLogger()
     }
 
     @Value("\${spring.security.jwt.token.realm}")

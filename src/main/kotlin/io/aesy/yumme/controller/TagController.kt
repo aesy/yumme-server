@@ -6,7 +6,7 @@ import io.aesy.yumme.entity.Tag
 import io.aesy.yumme.exception.ResourceNotFound
 import io.aesy.yumme.service.RecipeService
 import io.aesy.yumme.service.TagService
-import org.slf4j.LoggerFactory
+import io.aesy.yumme.util.getLogger
 import org.springframework.web.bind.annotation.*
 import javax.transaction.Transactional
 
@@ -16,7 +16,7 @@ class TagController(
     private val tagService: TagService
 ) {
     companion object {
-        private val logger = LoggerFactory.getLogger(TagController::class.java)
+        private val logger = getLogger()
     }
 
     @GetMapping("/tag")

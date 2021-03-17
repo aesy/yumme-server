@@ -9,8 +9,8 @@ import io.aesy.yumme.exception.UserAlreadyPresent
 import io.aesy.yumme.request.RegisterRequest
 import io.aesy.yumme.response.RegisterResponse
 import io.aesy.yumme.service.UserService
-import org.apache.shiro.authz.annotation.RequiresAuthentication
-import org.slf4j.LoggerFactory
+import io.aesy.yumme.util.getLogger
+import org.apache.shiro.authz.annotation.*
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import javax.transaction.Transactional
@@ -23,7 +23,7 @@ class UserController(
     private val authService: JwtService
 ) {
     companion object {
-        private val logger = LoggerFactory.getLogger(UserController::class.java)
+        private val logger = getLogger()
     }
 
     @RequiresAuthentication
