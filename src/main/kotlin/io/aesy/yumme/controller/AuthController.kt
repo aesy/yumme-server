@@ -26,7 +26,9 @@ class AuthController(
     fun getAccessToken(
         @Valid @RequestBody request: LoginRequest
     ): String {
-        val user = userService.getByEmailAndPassword(request.email, request.password)
+        val email = request.email!!
+        val password = request.password!!
+        val user = userService.getByEmailAndPassword(email, password)
             .orElseThrow { InvalidCredentials() }
 
         return authService.createToken(user)

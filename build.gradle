@@ -19,16 +19,16 @@ apply plugin: "io.spring.dependency-management"
 
 allOpen {
     annotation("javax.persistence.Entity")
+    annotation("io.aesy.yumme.dto.Dto")
 }
 
 noArg {
+    annotation("javax.persistence.Entity")
     annotation("io.aesy.yumme.dto.Dto")
 }
 
 group = "io.aesy.yumme"
 version = "0.0.1-SNAPSHOT"
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
 compileKotlin {
     kotlinOptions {
@@ -36,6 +36,7 @@ compileKotlin {
         jvmTarget = "1.8"
     }
 }
+
 compileTestKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]

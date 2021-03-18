@@ -1,6 +1,6 @@
 CREATE TABLE `unit_usage_area` (
     `id` int unsigned NOT NULL AUTO_INCREMENT,
-    `name` varchar(64)  NOT NULL UNIQUE,
+    `name` varchar(64) NOT NULL UNIQUE,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -8,7 +8,7 @@ CREATE TABLE `unit_has_unit_usage_area` (
     `unit` int unsigned NOT NULL,
     `unit_usage_area` int unsigned NOT NULL,
     PRIMARY KEY (`unit`, `unit_usage_area`),
-    FOREIGN KEY (`unit`) REFERENCES `unit`  (`id`)
+    FOREIGN KEY (`unit`) REFERENCES `unit` (`id`)
         ON UPDATE CASCADE,
     FOREIGN KEY (`unit_usage_area`) REFERENCES `unit_usage_area` (`id`)
         ON UPDATE CASCADE

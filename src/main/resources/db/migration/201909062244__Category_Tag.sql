@@ -1,6 +1,6 @@
 CREATE TABLE `category` (
     `id` int unsigned NOT NULL AUTO_INCREMENT,
-    `name` varchar(64)  NOT NULL UNIQUE,
+    `name` varchar(64) NOT NULL UNIQUE,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

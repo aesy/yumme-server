@@ -38,7 +38,7 @@ class DtoResponseBodyMapperAdvice(
         val value = bodyContainer.value
         val annotation = returnType.getMethodAnnotation(ResponseBodyType::class.java)
         val type = annotation?.type?.java
-                   ?: return
+            ?: return
 
         bodyContainer.value = when (value) {
             is Page<*> -> value.map {

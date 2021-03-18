@@ -14,6 +14,7 @@ data class RegisterRequest(
     @field:NotEmpty
     @field:JsonProperty("last_name")
     var lastName: String?,
+    @field:Length(min = 4, max = 128)
     @field:Email
     @field:NotEmpty
     @field:JsonProperty("email")
