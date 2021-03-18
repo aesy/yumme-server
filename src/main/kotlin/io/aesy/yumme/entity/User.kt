@@ -8,7 +8,7 @@ import javax.persistence.*
 @Table(name = "user")
 @Where(clause = "deleted_at = 0 AND suspended_at = 0")
 @SQLDelete(sql = "proc_user_delete", callable = true)
-data class User(
+class User(
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
