@@ -19,4 +19,8 @@ class User(
 
     @Column(name = "password", nullable = false)
     val password: String
-)
+) {
+    override fun toString(): String {
+        return "User(id=$id, email='$email')"
+    }
+}

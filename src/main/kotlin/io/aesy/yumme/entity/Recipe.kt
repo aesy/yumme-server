@@ -15,4 +15,8 @@ class Recipe(
 
     @Column(name = "description", nullable = false)
     val description: String
-)
+) {
+    override fun toString(): String {
+        return "Recipe(id=$id, title='$title')"
+    }
+}

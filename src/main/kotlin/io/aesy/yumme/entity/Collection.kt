@@ -27,4 +27,8 @@ class Collection(
         inverseJoinColumns = [JoinColumn(name = "recipe")]
     )
     val recipes: Set<Recipe> = setOf()
+
+    override fun toString(): String {
+        return "Collection(id=$id, title='$title')"
+    }
 }

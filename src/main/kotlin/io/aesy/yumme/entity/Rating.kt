@@ -16,4 +16,8 @@ class Rating(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe", nullable = false)
     val recipe: Recipe
-)
+) {
+    override fun toString(): String {
+        return "Rating(id=$id, score=$score)"
+    }
+}
