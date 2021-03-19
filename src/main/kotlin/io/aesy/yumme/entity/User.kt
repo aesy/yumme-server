@@ -18,7 +18,15 @@ class User(
     val email: String,
 
     @Column(name = "password", nullable = false)
-    val password: String
+    val password: String,
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "user_has_role",
+        joinColumns = [JoinColumn(name = "user")],
+        inverseJoinColumns = [JoinColumn(name = "role")]
+    )
+    val roles: MutableSet<Role> = mutableSetOf()
 ) {
     override fun toString(): String {
         return "User(id=$id, email='$email')"
