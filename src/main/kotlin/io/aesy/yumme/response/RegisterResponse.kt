@@ -7,4 +7,10 @@ class RegisterResponse(
     var accessToken: String,
     @field:JsonProperty("refresh_token")
     var refreshToken: String
-)
+) {
+    @field:JsonProperty("token_type")
+    val tokenType: String = "bearer"
+
+    @field:JsonProperty("expires_in")
+    val expiresIn: Int = 20 // TODO
+}

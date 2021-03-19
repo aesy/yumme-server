@@ -3,6 +3,7 @@ package io.aesy.yumme.auth
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTDecodeException
+import com.auth0.jwt.exceptions.JWTVerificationException
 import io.aesy.yumme.entity.User
 import io.aesy.yumme.service.UserService
 import io.aesy.yumme.util.getLogger
@@ -36,20 +37,18 @@ class JwtService(
     fun validateToken(token: String, user: User): Boolean {
         val algorithm = Algorithm.HMAC256(secret)
 
-        return true
+        try {
+            JWT.require(algorithm)
+                .withSubject(user.email)
+                .build()
+                .verify(token)
 
-//        try {
-//            JWT.require(algorithm)
-//                .withSubject(user.email)
-//                .build()
-//                .verify(token)
-//
-//            return true
-//        } catch (e: JWTVerificationException) {
-//            logger.info("Failed to verify JWT token of user ${user.email}. ${e.message}")
-//        }
-//
-//        return false
+            return true
+        } catch (e: JWTVerificationException) {
+            logger.info("Failed to verify JWT token of user ${user.email}. ${e.message}")
+        }
+
+        return false
     }
 
     fun createToken(user: User): String {
@@ -65,14 +64,14 @@ class JwtService(
 
     fun getUser(accessToken: String): Optional<User> {
         try {
-//            val email = JWT.decode(accessToken)
-//                .subject
-//
-//            if (email == null) {
-//                logger.info("Failed to extract subject from JWT token. It's missing.")
-//
-//                return Optional.empty()
-//            }
+            val email = JWT.decode(accessToken)
+                .subject
+
+            if (email == null) {
+                logger.info("Failed to extract subject from JWT token. It's missing.")
+
+                return Optional.empty()
+            }
 
             return userService.getByEmail("test@test.com")
         } catch (e: JWTDecodeException) {

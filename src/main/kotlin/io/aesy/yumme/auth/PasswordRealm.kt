@@ -1,5 +1,6 @@
 package io.aesy.yumme.auth
 
+import io.aesy.yumme.entity.*
 import io.aesy.yumme.service.UserService
 import io.aesy.yumme.util.getLogger
 import org.apache.shiro.authc.*
@@ -8,9 +9,7 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo
 import org.apache.shiro.realm.AuthorizingRealm
 import org.apache.shiro.subject.PrincipalCollection
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.stereotype.Component
 
-@Component
 class PasswordRealm(
     private val userService: UserService
 ): AuthorizingRealm() {
@@ -25,21 +24,38 @@ class PasswordRealm(
         return token is UsernamePasswordToken
     }
 
-    override fun doGetAuthorizationInfo(principals: PrincipalCollection): AuthorizationInfo {
+    override fun doGetAuthorizationInfo(principals: PrincipalCollection): AuthorizationInfo? {
+        if (principals.isEmpty) {
+            return null
+        }
+
+        val principal = principals.primaryPrincipal
+
+        if (principal !is User) {
+            return null
+        }
+
+        // TODO get roles and permissions from database
         val authInfo = SimpleAuthorizationInfo()
-        authInfo.addRole("ROLE_ONE") // TODO
-        val permissions = setOf("PERMISSION_ONE", "PERMISSION_TWO")
+        authInfo.addRoles(setOf(Role.USER))
+        val permissions = setOf(Permission.READ_OWN_USER, Permission.WRITE_OWN_USER)
         authInfo.addStringPermissions(permissions)
 
         return authInfo
     }
 
     @Throws(AuthenticationException::class)
-    override fun doGetAuthenticationInfo(auth: AuthenticationToken): AuthenticationInfo {
-        val email = auth.principal as String
-        val password = auth.credentials as String
-        val user = userService.getByEmailAndPassword(email, password)
-            .orElseThrow { AuthenticationException() }
+    override fun doGetAuthenticationInfo(auth: AuthenticationToken): AuthenticationInfo? {
+        val token = auth as UsernamePasswordToken
+        val email = token.username
+        val password = String(token.password)
+        val userOptional = userService.getByEmailAndPassword(email, password)
+
+        if (!userOptional.isPresent) {
+            return null
+        }
+
+        val user = userOptional.get()
 
         return SimpleAuthenticationInfo(user, password, realm)
     }
