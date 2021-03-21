@@ -25,9 +25,11 @@ CREATE TABLE `collection_has_recipe` (
     `added_at` int unsigned NOT NULL DEFAULT 0,
     PRIMARY KEY (`recipe`, `collection`),
     FOREIGN KEY (`recipe`) REFERENCES `recipe` (`id`)
-        ON UPDATE CASCADE,
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
     FOREIGN KEY (`collection`) REFERENCES `collection` (`id`)
         ON UPDATE CASCADE
+        ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DELIMITER $$

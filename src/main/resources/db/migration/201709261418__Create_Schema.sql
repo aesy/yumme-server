@@ -76,9 +76,12 @@ CREATE TABLE `recipe_has_ingredient` (
     `unit` int unsigned NOT NULL,
     PRIMARY KEY (`recipe`, `ingredient`),
     FOREIGN KEY (`recipe`) REFERENCES `recipe` (`id`)
-        ON UPDATE CASCADE,
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
     FOREIGN KEY (`ingredient`) REFERENCES `ingredient` (`id`)
-        ON UPDATE CASCADE,
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
     FOREIGN KEY (`unit`) REFERENCES `unit` (`id`)
         ON UPDATE CASCADE
+        ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

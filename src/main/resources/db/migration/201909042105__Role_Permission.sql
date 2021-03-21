@@ -19,9 +19,11 @@ CREATE TABLE `user_has_role` (
     `assigned_at` INT UNSIGNED NOT NULL DEFAULT 0,
     PRIMARY KEY (`user`, `role`),
     FOREIGN KEY (`user`) REFERENCES `user` (`id`)
-        ON UPDATE CASCADE,
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
     FOREIGN KEY (`role`) REFERENCES `role` (`id`)
         ON UPDATE CASCADE
+        ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DELIMITER $$
@@ -40,9 +42,11 @@ CREATE TABLE `role_grants_permission` (
     `assigned_at` INT UNSIGNED NOT NULL DEFAULT 0,
     PRIMARY KEY (`role`, `permission`),
     FOREIGN KEY (`role`) REFERENCES `role` (`id`)
-        ON UPDATE CASCADE,
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
     FOREIGN KEY (`permission`) REFERENCES `permission` (`id`)
         ON UPDATE CASCADE
+        ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DELIMITER $$

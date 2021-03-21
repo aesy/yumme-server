@@ -9,9 +9,11 @@ CREATE TABLE `recipe_belong_to_category` (
     `category` int unsigned NOT NULL,
     PRIMARY KEY (`recipe`, `category`),
     FOREIGN KEY (`recipe`) REFERENCES `recipe` (`id`)
-        ON UPDATE CASCADE,
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
     FOREIGN KEY (`category`) REFERENCES `unit_usage_area` (`id`)
         ON UPDATE CASCADE
+        ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `tag` (
