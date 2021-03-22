@@ -8,5 +8,5 @@ data class CollectionDto(
     val title: String,
 
     @JsonProperty
-    val recipes: List<RecipeDto> = arrayListOf()
+    val recipes: List<String> = arrayListOf()
 )

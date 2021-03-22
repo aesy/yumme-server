@@ -6,6 +6,9 @@ import java.util.*
 @Dto
 data class RecipeDto(
     @JsonProperty
+    var id: Long?,
+
+    @JsonProperty
     var title: String?,
 
     @JsonProperty
