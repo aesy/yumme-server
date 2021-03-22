@@ -8,5 +8,5 @@ data class RatingDto(
     var average: Double?,
 
     @JsonProperty
-    var count: Int?
+    var count: Long?
 )
