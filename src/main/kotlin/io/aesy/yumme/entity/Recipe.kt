@@ -33,6 +33,11 @@ class Recipe(
     @Column(name = "approximate_completion_time", nullable = false)
     var completionTime: Duration = Duration.ZERO
 
+    @Column(name = "created_at", nullable = false)
+    @Convert(converter = InstantIntPersistenceConverter::class)
+    @Generated(GenerationTime.INSERT)
+    val createdAt: Instant = Instant.now()
+
     override fun toString(): String {
         return "Recipe(id=$id, title='$title')"
     }

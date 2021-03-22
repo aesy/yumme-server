@@ -4,11 +4,23 @@ CREATE TABLE `recipe` (
     `description` text NOT NULL,
     `approximate_completion_time` int unsigned NOT NULL,
     `public` tinyint(1) NOT NULL DEFAULT 0,
+    `created_at` int unsigned NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `recipe`
-    ADD INDEX (`public`);
+    ADD INDEX (`public`),
+    ADD INDEX (`created_at`);
+
+DELIMITER $$
+CREATE TRIGGER `trig_recipe_insert` BEFORE INSERT ON `recipe`
+FOR EACH ROW
+    BEGIN
+        IF (new.`created_at` = 0) THEN
+            SET new.`created_at` = UNIX_TIMESTAMP();
+        END IF;
+    END $$
+DELIMITER ;
 
 CREATE TABLE `rating` (
     `id` int unsigned NOT NULL AUTO_INCREMENT,

@@ -4,7 +4,7 @@ import java.time.Instant
 import javax.persistence.AttributeConverter
 
 class InstantIntPersistenceConverter: AttributeConverter<Instant, Long> {
-    override fun convertToDatabaseColumn(instant: Instant?): Long? {
+    override fun convertToDatabaseColumn(instant: Instant?): Long {
         if (instant == null) {
             return 0
         }
@@ -12,7 +12,7 @@ class InstantIntPersistenceConverter: AttributeConverter<Instant, Long> {
         return instant.epochSecond
     }
 
-    override fun convertToEntityAttribute(seconds: Long?): Instant? {
+    override fun convertToEntityAttribute(seconds: Long?): Instant {
         if (seconds == null) {
             return Instant.ofEpochSecond(0)
         }
