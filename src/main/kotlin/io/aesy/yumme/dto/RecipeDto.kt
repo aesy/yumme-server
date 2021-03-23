@@ -1,7 +1,6 @@
 package io.aesy.yumme.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.util.*
 
 @Dto
 data class RecipeDto(
@@ -15,8 +14,11 @@ data class RecipeDto(
     var description: String?,
 
     @JsonProperty
-    var rating: RatingDto?
-) {
+    var rating: RatingDto?,
+
     @JsonProperty
-    var image = "https://loremflickr.com/320/420?hash=${UUID.randomUUID()}"
-}
+    var tags: Set<String> = setOf(),
+
+    @JsonProperty
+    var categories: Set<String> = setOf()
+)

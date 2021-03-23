@@ -38,6 +38,25 @@ class Recipe(
     @Generated(GenerationTime.INSERT)
     val createdAt: Instant = Instant.now()
 
+    @OneToMany(
+        mappedBy = "recipe",
+        fetch = FetchType.EAGER,
+        cascade = [CascadeType.ALL],
+        orphanRemoval = true
+    )
+    val tags: MutableSet<Tag> = mutableSetOf()
+
+    @ManyToMany(
+        fetch = FetchType.EAGER,
+        cascade = [CascadeType.ALL]
+    )
+    @JoinTable(
+        name = "recipe_belong_to_category",
+        joinColumns = [JoinColumn(name = "recipe")],
+        inverseJoinColumns = [JoinColumn(name = "category")]
+    )
+    val categories: MutableSet<Category> = mutableSetOf()
+
     override fun toString(): String {
         return "Recipe(id=$id, title='$title')"
     }

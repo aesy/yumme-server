@@ -32,6 +32,16 @@ class CategoryController(
             .toList()
     }
 
+    @GetMapping("/category/{id}")
+    @Transactional
+    @ResponseBodyType(type = CategoryDto::class)
+    fun getCategoryById(
+        @PathVariable(required = true, value = "id") id: Long
+    ): Category {
+        return categoryService.getById(id)
+            .orElseThrow { ResourceNotFound() }
+    }
+
     @GetMapping("/recipe/{id}/category")
     @Transactional
     @ResponseBodyType(type = CategoryDto::class)
