@@ -9,9 +9,9 @@ import io.aesy.yumme.request.UpdateRecipeRequest
 import io.aesy.yumme.service.RecipeService
 import org.modelmapper.ModelMapper
 import org.springframework.web.bind.annotation.*
-import java.util.*
 import javax.transaction.Transactional
 import javax.validation.Valid
+import kotlin.math.min
 
 @RestController
 @RequestMapping("recipe")
@@ -22,33 +22,23 @@ class RecipeController(
     @GetMapping("/recent")
     @Transactional
     @ResponseBodyType(type = RecipeDto::class)
-    fun recent(
+    fun getRecentRecipes(
         @RequestParam(required = false, defaultValue = "10") limit: Int
     ): List<Recipe> {
         val maxLimit = 100
 
-        return recipeService.getAll()
-            .asSequence()
-            .sortedByDescending { it.id }
-            .take(Math.min(limit, maxLimit))
-            .toList()
+        return recipeService.getRecent(min(limit, maxLimit))
     }
 
     @GetMapping("/popular")
     @Transactional
     @ResponseBodyType(type = RecipeDto::class)
-    fun popular(
+    fun getPopularRecipes(
         @RequestParam(required = false, defaultValue = "10") limit: Int
     ): List<Recipe> {
         val maxLimit = 100
 
-        return recipeService.getAll()
-            .asSequence()
-            .sortedByDescending { recipe ->
-                recipe.ratings.sumBy { it.score } / recipe.ratings.size.toDouble()
-            }
-            .take(Math.min(limit, maxLimit))
-            .toList()
+        return recipeService.getPopular(min(limit, maxLimit))
     }
 
     @GetMapping
