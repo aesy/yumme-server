@@ -1,13 +1,13 @@
 package io.aesy.yumme.controller
 
 import io.aesy.yumme.auth.AuthorizedUser
-import io.aesy.yumme.auth.JwtService
 import io.aesy.yumme.conversion.ResponseBodyType
 import io.aesy.yumme.dto.UserDto
+import io.aesy.yumme.entity.Permission.Companion.READ_OWN_USER
 import io.aesy.yumme.entity.User
 import io.aesy.yumme.exception.UserAlreadyPresent
+import io.aesy.yumme.request.LoginRequest
 import io.aesy.yumme.request.RegisterRequest
-import io.aesy.yumme.response.RegisterResponse
 import io.aesy.yumme.service.UserService
 import io.aesy.yumme.util.getLogger
 import org.apache.shiro.authz.annotation.*
@@ -20,13 +20,14 @@ import javax.validation.Valid
 @RequestMapping("user")
 class UserController(
     private val userService: UserService,
-    private val authService: JwtService
+    private val authController: AuthController
 ) {
     companion object {
         private val logger = getLogger()
     }
 
     @RequiresAuthentication
+    @RequiresPermissions(READ_OWN_USER)
     @GetMapping("/me")
     @ResponseStatus(HttpStatus.OK)
     @Transactional
@@ -40,7 +41,7 @@ class UserController(
     @Transactional
     fun register(
         @Valid @RequestBody request: RegisterRequest
-    ): RegisterResponse {
+    ): String {
         val email = request.email!!
         val password = request.password!!
 
@@ -48,9 +49,8 @@ class UserController(
             throw UserAlreadyPresent()
         }
 
-        val user = userService.save(User(email = email, password = password))
-        val accessToken = authService.createToken(user)
+        userService.save(User(email = email, password = password))
 
-        return RegisterResponse(accessToken, "")
+        return authController.getAccessToken(LoginRequest(email = email, password = password))
     }
 }

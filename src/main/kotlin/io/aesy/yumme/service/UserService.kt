@@ -1,5 +1,6 @@
 package io.aesy.yumme.service
 
+import io.aesy.yumme.auth.PasswordService
 import io.aesy.yumme.entity.User
 import io.aesy.yumme.repository.UserRepository
 import org.springframework.stereotype.Service
@@ -8,6 +9,7 @@ import javax.transaction.Transactional
 
 @Service
 class UserService(
+    private val passwordService: PasswordService,
     private val userRepository: UserRepository
 ) {
     @Transactional
@@ -19,12 +21,6 @@ class UserService(
     @Transactional
     fun getById(id: Long): Optional<User> {
         return userRepository.findById(id)
-    }
-
-    @Transactional
-    fun getByUuid(uuid: UUID): Optional<User> {
-        // return userRepository.finduserByUuid(uuid)
-        throw NotImplementedError()
     }
 
     @Transactional
