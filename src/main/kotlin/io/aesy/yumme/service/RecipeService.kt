@@ -42,12 +42,6 @@ class RecipeService(
     }
 
     @Transactional
-    fun getByUuid(uuid: UUID): Optional<Recipe> {
-        // return recipeRepository.findRecipeByUuid(uuid)
-        throw NotImplementedError()
-    }
-
-    @Transactional
     fun save(recipe: Recipe): Recipe {
         return recipeRepository.save(recipe)
     }
@@ -60,7 +54,7 @@ class RecipeService(
     }
 
     @Transactional
-    fun delete(id: Long): Boolean {
+    fun deleteById(id: Long): Boolean {
         recipeRepository.deleteById(id)
 
         return true

@@ -30,3 +30,8 @@ spring:
                 secret: secret-key
                 expiration: 60
                 realm: yumme
+
+shiro:
+    enabled: true
+    web:
+        enabled: true
