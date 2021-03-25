@@ -51,7 +51,6 @@ repositories {
 dependencies {
     api group: "org.jetbrains.kotlin", name: "kotlin-stdlib-jdk8", version: "$kotlin_version"
     api group: "org.jetbrains.kotlin", name: "kotlin-reflect", version: "$kotlin_version"
-    runtime group: "org.springframework.boot", name: "spring-boot-devtools", version: "$spring_boot_version"
     implementation group: "org.springframework.boot", name: "spring-boot-starter-data-jpa", version: "$spring_boot_version"
     implementation group: "org.springframework.boot", name: "spring-boot-starter-validation", version: "$spring_boot_version"
     implementation group: "org.springframework.boot", name: "spring-boot-starter-web", version: "$spring_boot_version"
