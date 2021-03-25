@@ -1,9 +1,13 @@
 version: '3'
 
 services:
-    recipe:
-        container_name: recipe
+    yumme:
+        container_name: yumme
         build: .
+        environment:
+            DATABASE_HOST: mariadb
+        ports:
+        - 8080:8080
         links:
         - mariadb
         depends_on:
@@ -13,7 +17,7 @@ services:
         image: mariadb:latest
         environment:
         - MYSQL_DATABASE=yumme
-        - MYSQL_ROOT_PASSWORD=postgres
+        - MYSQL_ROOT_PASSWORD=root
         volumes:
         - mariadb_data:/var/lib/mysql
 

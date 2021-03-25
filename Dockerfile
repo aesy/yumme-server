@@ -1,7 +1,11 @@
-FROM openjdk:alpine
+FROM gradle:6.8.3-jdk11 AS build
+COPY --chown=gradle:gradle . /home/gradle/src
+WORKDIR /home/gradle/src
+RUN gradle build -x test
 
+FROM openjdk:11-jre-slim
 RUN mkdir /app
 WORKDIR /app
-ADD build/libs/Yumme-0.0.1-SNAPSHOT.jar recipe.jar
+COPY --from=build /home/gradle/src/build/libs/*.jar yumme.jar
 
-CMD java -jar recipe.jar
+CMD java -jar yumme.jar
