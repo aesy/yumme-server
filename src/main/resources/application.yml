@@ -19,6 +19,7 @@ spring:
             hibernate:
                 dialect: org.hibernate.dialect.MySQL5InnoDBDialect
                 ddl-auto: validate
+
     flyway:
         enabled: true
         sql-migration-prefix:
@@ -27,9 +28,9 @@ spring:
     security:
         jwt:
             token:
-                secret: secret-key
-                expiration: 60
-                realm: yumme
+                secret: ${TOKEN_SECRET:secret}
+                expiration: ${TOKEN_EXPIRATION_TIME:60}
+                realm: ${TOKEN_REALM:yumme}
 
 shiro:
     enabled: true
