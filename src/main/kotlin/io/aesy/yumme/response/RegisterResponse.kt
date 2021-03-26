@@ -1,7 +1,9 @@
 package io.aesy.yumme.response
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import io.aesy.yumme.dto.Dto
 
+@Dto
 class RegisterResponse(
     @field:JsonProperty("access_token")
     var accessToken: String,

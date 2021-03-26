@@ -5,11 +5,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import io.aesy.yumme.conversion.DurationLongJacksonConverter
 import io.aesy.yumme.conversion.LongDurationJacksonConverter
+import io.aesy.yumme.dto.Dto
 import io.aesy.yumme.entity.User
 import org.hibernate.validator.constraints.Length
 import java.time.Duration
 import javax.validation.constraints.*
 
+@Dto
 data class CreateRecipeRequest(
     @field:NotEmpty
     @field:Length(max = 128)

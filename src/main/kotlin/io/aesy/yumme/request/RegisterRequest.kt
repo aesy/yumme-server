@@ -1,10 +1,12 @@
 package io.aesy.yumme.request
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import io.aesy.yumme.dto.Dto
 import org.hibernate.validator.constraints.Length
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotEmpty
 
+@Dto
 data class RegisterRequest(
     @field:Length(min = 1, max = 64)
     @field:NotEmpty

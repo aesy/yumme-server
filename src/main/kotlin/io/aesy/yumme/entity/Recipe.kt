@@ -24,7 +24,7 @@ class Recipe(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author", nullable = false)
-    val author: User
+    var author: User
 ) {
     @Column(name = "public", nullable = false)
     var public: Boolean = false
@@ -36,7 +36,7 @@ class Recipe(
     @Column(name = "created_at", nullable = false)
     @Convert(converter = InstantIntPersistenceConverter::class)
     @Generated(GenerationTime.INSERT)
-    val createdAt: Instant = Instant.now()
+    var createdAt: Instant = Instant.now()
 
     @OneToMany(
         mappedBy = "recipe",
@@ -44,7 +44,7 @@ class Recipe(
         cascade = [CascadeType.ALL],
         orphanRemoval = true
     )
-    val tags: MutableSet<Tag> = mutableSetOf()
+    var tags: MutableSet<Tag> = mutableSetOf()
 
     @ManyToMany(
         fetch = FetchType.EAGER,
@@ -55,7 +55,7 @@ class Recipe(
         joinColumns = [JoinColumn(name = "recipe")],
         inverseJoinColumns = [JoinColumn(name = "category")]
     )
-    val categories: MutableSet<Category> = mutableSetOf()
+    var categories: MutableSet<Category> = mutableSetOf()
 
     override fun toString(): String {
         return "Recipe(id=$id, title='$title')"
