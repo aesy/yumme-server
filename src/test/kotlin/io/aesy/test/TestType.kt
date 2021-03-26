@@ -8,6 +8,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
+import org.springframework.transaction.annotation.Propagation
+import org.springframework.transaction.annotation.Transactional
 
 object TestType {
     /**
@@ -29,6 +31,7 @@ object TestType {
      * set of classes required to test the persistence layer. A MariaDB container is started in docker.
      */
     @Tag("PersistenceTest")
+    @Transactional(propagation = Propagation.NEVER)
     @DataJpaTest
     @AutoConfigureTestDatabase(replace = Replace.NONE)
     @Integration
