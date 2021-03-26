@@ -48,6 +48,15 @@ repositories {
     mavenCentral()
 }
 
+configurations.all {
+    // org.junit:junit can't be excluded due to testcontainers, see github.com/testcontainers/testcontainers-java/issues/970
+    exclude group: "org.junit", module: "junit-bom"
+    exclude group: "org.mockito", module: "mockito-core"
+    exclude group: "org.mockito", module: "mockito-junit-jupiter"
+    exclude group: "org.assertj", module: "assertj-core"
+    exclude group: "org.hamcrest", module: "hamcrest"
+}
+
 dependencies {
     api group: "org.jetbrains.kotlin", name: "kotlin-stdlib-jdk8", version: "$kotlin_version"
     api group: "org.jetbrains.kotlin", name: "kotlin-reflect", version: "$kotlin_version"
@@ -62,21 +71,13 @@ dependencies {
     implementation group: "org.flywaydb", name: "flyway-core", version: "6.5.7"
     implementation group: "com.auth0", name: "java-jwt", version: "3.8.2"
 
-    testImplementation (group: "org.springframework.boot", name: "spring-boot-starter-test", version: "$spring_boot_version") {
-        exclude group: "junit"
-        exclude group: "org.junit.jupiter"
-        exclude group: "org.mockito"
-        exclude group: "org.assertj"
-    }
+    testImplementation group: "org.springframework.boot", name: "spring-boot-starter-test", version: "$spring_boot_version"
     testImplementation group: "org.junit.jupiter", name: "junit-jupiter", version: "5.6.0"
     testImplementation group: "io.strikt", name: "strikt-core", version: "0.29.0"
     testImplementation group: "io.strikt", name: "strikt-jvm", version: "0.29.0"
     testImplementation group: "io.mockk", name: "mockk", version: "1.10.0"
     testImplementation group: "com.ninja-squad", name: "springmockk", version: "1.1.3"
-    testImplementation (group: "org.testcontainers", name: "junit-jupiter", version: "1.15.2") {
-        exclude group: "junit"
-        exclude group: "org.junit.jupiter"
-    }
+    testImplementation group: "org.testcontainers", name: "junit-jupiter", version: "1.15.2"
     testImplementation group: "org.testcontainers", name: "mariadb", version: "1.15.2"
 }
 
