@@ -1,15 +1,10 @@
 package io.aesy.yumme.auth
 
 import io.aesy.yumme.service.UserService
-import org.apache.shiro.authz.*
-import org.apache.shiro.cache.CacheManager
-import org.apache.shiro.cache.MemoryConstrainedCacheManager
-import org.apache.shiro.event.EventBus
-import org.apache.shiro.event.support.DefaultEventBus
+import org.apache.shiro.authz.AuthorizationException
+import org.apache.shiro.authz.UnauthenticatedException
 import org.apache.shiro.mgt.SessionsSecurityManager
 import org.apache.shiro.realm.Realm
-import org.apache.shiro.spring.LifecycleBeanPostProcessor
-import org.apache.shiro.spring.ShiroEventBusBeanPostProcessor
 import org.apache.shiro.spring.config.AbstractShiroConfiguration
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator
@@ -27,32 +22,6 @@ class SecurityConfiguration: AbstractShiroConfiguration(), WebMvcConfigurer {
         argumentResolvers: MutableList<HandlerMethodArgumentResolver>
     ) {
         argumentResolvers.add(AuthorizedUserArgumentResolver())
-    }
-
-    @Bean
-    fun lifecycleBeanPostProcessor(): LifecycleBeanPostProcessor? {
-        return LifecycleBeanPostProcessor()
-    }
-
-    @Bean
-    fun eventBus(): EventBus? {
-        return DefaultEventBus()
-    }
-
-    @Bean
-    fun shiroEventBusAwareBeanPostProcessor(): ShiroEventBusBeanPostProcessor? {
-        return ShiroEventBusBeanPostProcessor(eventBus())
-    }
-
-    @Bean
-    fun cacheManager(): CacheManager {
-        return MemoryConstrainedCacheManager()
-    }
-
-    // Bugfix SHIRO-627
-    @Bean
-    override fun authorizer(): Authorizer {
-        return super.authorizer()
     }
 
     @Bean
