@@ -70,6 +70,7 @@ dependencies {
     implementation group: "org.mariadb.jdbc", name: "mariadb-java-client", version: "2.1.0"
     implementation group: "org.flywaydb", name: "flyway-core", version: "6.5.7"
     implementation group: "com.auth0", name: "java-jwt", version: "3.8.2"
+    implementation group: "com.christophsturm", name: "filepeek", version: "0.1.3" // BUGFIX: github.com/robfletcher/strikt/issues/242
 
     testImplementation group: "org.springframework.boot", name: "spring-boot-starter-test", version: "$spring_boot_version"
     testImplementation group: "org.junit.jupiter", name: "junit-jupiter", version: "5.6.0"
