@@ -4,7 +4,6 @@ import io.aesy.yumme.entity.User
 import io.aesy.yumme.util.getLogger
 import org.apache.shiro.SecurityUtils
 import org.springframework.core.MethodParameter
-import org.springframework.http.HttpStatus
 import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
@@ -30,22 +29,17 @@ class AuthorizedUserArgumentResolver: HandlerMethodArgumentResolver {
         mavContainer: ModelAndViewContainer?,
         webRequest: NativeWebRequest,
         binderFactory: WebDataBinderFactory?
-    ): User {
+    ): User? {
         logger.debug("About to try to resolve currently logged in user")
         val subject = SecurityUtils.getSubject()
-        val principal = subject.principal
-
-        if (principal == null) {
-            logger.error("Failed to resolve currently logged in user. Subject principal is null.")
-            throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
-        }
+        val principal = subject.principal ?: return null
 
         if (principal !is User) {
             logger.error(
                 "Failed to resolve currently logged in user. Subject principal of type {} cannot be cast to type {}.",
                 principal::class.java, User::class.java
             )
-            throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+            return null
         }
 
         return principal
