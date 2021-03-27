@@ -10,6 +10,11 @@ buildscript {
     }
 }
 
+
+plugins {
+    id 'jacoco'
+}
+
 apply plugin: "kotlin"
 apply plugin: "kotlin-noarg"
 apply plugin: "kotlin-jpa"
@@ -84,4 +89,12 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.enabled true
+    }
 }
