@@ -28,7 +28,7 @@ Backend for Yumme - a self-hosted recipe journal.
 
 To compile and package the application, simply issue the following command:
 
-$ `gradle build`
+    $ gradle build
 
 This will create an executable jar located in `build/libs/`.
 
@@ -36,7 +36,7 @@ This will create an executable jar located in `build/libs/`.
 
 To run the application from the command line, the following command can be used:
 
-$ `gradle bootRun`
+    $ gradle bootRun
 
 This assumes a database to be accessible at `localhost:3306` (configurable through environment variables, 
 see `src/main/resources/application.yml`). If you don't want to set one up for whatever reason, you can run 
@@ -44,13 +44,13 @@ the database in a Docker container. Docker compose can be used to easily run all
 application without polluting the host they are running on. To run the application using docker-compose, 
 use the following command in the root directory:
 
-$ `docker-compose up` 
+    $ docker-compose up 
 
 #### Test 
 
 Run unit and integration tests with gradle:
 
-$ `gradle test`
+    $ gradle test
 
 ## Deployment
 
@@ -58,7 +58,7 @@ $ `gradle test`
 
 To create an image, run the following command in the root directory:
 
-$ `docker build . -t yumme-server`
+    $ docker build . -t yumme-server
 
 An image is created and published automatically to github packages on git tag pushes.
 
