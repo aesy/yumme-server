@@ -1,39 +1,39 @@
 server:
-    port: ${PORT:8080}
-    servlet:
-        context-path: /api/v1
+  port: ${PORT:8080}
+  servlet:
+    context-path: /api/v1
 
 spring:
-    datasource:
-        driver-class-name: org.mariadb.jdbc.Driver
-        url: jdbc:mariadb://${DATABASE_HOST:localhost}:${DATABASE_PORT:3306}/${DATABASE_NAME:yumme}
-        username: ${DATABASE_USERNAME:root}
-        password: ${DATABASE_PASSWORD:root}
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://${DATABASE_HOST:localhost}:${DATABASE_PORT:3306}/${DATABASE_NAME:yumme}
+    username: ${DATABASE_USERNAME:root}
+    password: ${DATABASE_PASSWORD:root}
 
-    aop:
-        proxy-target-class: true
+  aop:
+    proxy-target-class: true
 
-    jpa:
-        open-in-view: false
-        show-sql: true
-        properties:
-            hibernate:
-                dialect: org.hibernate.dialect.MySQL5InnoDBDialect
-                ddl-auto: validate
+  jpa:
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        ddl-auto: validate
 
-    flyway:
-        enabled: true
-        sql-migration-prefix:
-        baseline-on-migrate: true
+  flyway:
+    enabled: true
+    sql-migration-prefix:
+    baseline-on-migrate: true
 
-    security:
-        jwt:
-            token:
-                secret: ${TOKEN_SECRET:secret}
-                expiration: ${TOKEN_EXPIRATION_TIME:60}
-                realm: ${TOKEN_REALM:yumme}
+  security:
+    jwt:
+      token:
+        secret: ${TOKEN_SECRET:secret}
+        expiration: ${TOKEN_EXPIRATION_TIME:60}
+        realm: ${TOKEN_REALM:yumme}
 
 shiro:
+  enabled: true
+  web:
     enabled: true
-    web:
-        enabled: true

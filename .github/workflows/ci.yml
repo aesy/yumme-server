@@ -1,35 +1,35 @@
 name: Continous Integration
 
 on:
-    push:
-        branches: [ master ]
-    pull_request:
-        branches: [ master ]
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        steps:
-        -   name: Checkout
-            uses: actions/checkout@v2
-        -   name: Set up environment
-            uses: actions/setup-java@v1
-            with:
-                java-version: 11
-        -   name: Build with Gradle
-            run: ./gradlew build -x test
-    test:
-        runs-on: ubuntu-latest
-        steps:
-        -   name: Checkout
-            uses: actions/checkout@v2
-        -   name: Set up environment
-            uses: actions/setup-java@v1
-            with:
-                java-version: 11
-        -   name: Test with Gradle
-            run: ./gradlew test --info
-        -   name: Upload coverage to Codecov
-            uses: codecov/codecov-action@v1
-            with:
-                file: build/reports/jacoco/test/jacocoTestReport.xml
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set up environment
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+    - name: Build with Gradle
+      run: ./gradlew build -x test
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set up environment
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+    - name: Test with Gradle
+      run: ./gradlew test --info
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        file: build/reports/jacoco/test/jacocoTestReport.xml

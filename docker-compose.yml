@@ -1,25 +1,25 @@
 version: '3'
 
 services:
-    yumme:
-        container_name: yumme
-        build: .
-        environment:
-            DATABASE_HOST: mariadb
-        ports:
-        - 8080:8080
-        links:
-        - mariadb
-        depends_on:
-        - mariadb
-    mariadb:
-        container_name: mariadb
-        image: mariadb:latest
-        environment:
-        - MYSQL_DATABASE=yumme
-        - MYSQL_ROOT_PASSWORD=root
-        volumes:
-        - mariadb_data:/var/lib/mysql
+  yumme:
+    container_name: yumme
+    build: .
+    environment:
+      DATABASE_HOST: mariadb
+    ports:
+    - 8080:8080
+    links:
+    - mariadb
+    depends_on:
+    - mariadb
+  mariadb:
+    container_name: mariadb
+    image: mariadb:latest
+    environment:
+    - MYSQL_DATABASE=yumme
+    - MYSQL_ROOT_PASSWORD=root
+    volumes:
+    - mariadb_data:/var/lib/mysql
 
 volumes:
-    mariadb_data:
+  mariadb_data:
