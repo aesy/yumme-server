@@ -15,6 +15,8 @@
 
 Backend for Yumme - a self-hosted recipe journal.
 
+### [API Reference](https://aesy.github.io/yumme-server/apidocs/)
+
 ## Development
 
 #### Prerequisites

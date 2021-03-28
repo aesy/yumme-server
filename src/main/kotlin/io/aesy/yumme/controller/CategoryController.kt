@@ -1,61 +1,60 @@
 package io.aesy.yumme.controller
 
-import io.aesy.yumme.conversion.ResponseBodyType
 import io.aesy.yumme.dto.CategoryDto
-import io.aesy.yumme.entity.Category
 import io.aesy.yumme.exception.ResourceNotFound
 import io.aesy.yumme.service.CategoryService
 import io.aesy.yumme.service.RecipeService
-import io.aesy.yumme.util.getLogger
+import io.aesy.yumme.util.ModelMapper.map
+import io.swagger.v3.oas.annotations.tags.Tag
+import org.modelmapper.ModelMapper
 import org.springframework.web.bind.annotation.*
 import javax.transaction.Transactional
 
+@Tag(name = "Category")
 @RestController
 class CategoryController(
     private val recipeService: RecipeService,
-    private val categoryService: CategoryService
+    private val categoryService: CategoryService,
+    private val mapper: ModelMapper
 ) {
-    companion object {
-        private val logger = getLogger()
-    }
-
     @GetMapping("/category")
     @Transactional
-    @ResponseBodyType(type = CategoryDto::class)
-    fun list(
+    fun listCategories(
         @RequestParam(required = false, defaultValue = "0") offset: Int,
         @RequestParam(required = false, defaultValue = "10") limit: Int
-    ): List<Category> {
+    ): List<CategoryDto> {
         return categoryService.getAll()
             .asSequence()
             .sortedBy { it.name }
+            .map { mapper.map<CategoryDto>(it) }
             .toList()
     }
 
     @GetMapping("/category/{id}")
     @Transactional
-    @ResponseBodyType(type = CategoryDto::class)
-    fun getCategoryById(
+    fun inspectCategoryById(
         @PathVariable(required = true, value = "id") id: Long
-    ): Category {
+    ): CategoryDto {
         return categoryService.getById(id)
+            .map { mapper.map<CategoryDto>(it) }
             .orElseThrow { ResourceNotFound() }
     }
 
     @GetMapping("/recipe/{id}/category")
     @Transactional
-    @ResponseBodyType(type = CategoryDto::class)
-    fun listByRecipe(
+    @Tag(name = "Recipe")
+    fun listCategoriesByRecipe(
         @PathVariable(required = true, value = "id") id: Long,
         @RequestParam(required = false, defaultValue = "0") offset: Int,
         @RequestParam(required = false, defaultValue = "10") limit: Int
-    ): List<Category> {
+    ): List<CategoryDto> {
         val recipe = recipeService.getById(id)
             .orElseThrow { ResourceNotFound() }
 
         return categoryService.getAllByRecipe(recipe)
             .asSequence()
             .sortedBy { it.name }
+            .map { mapper.map<CategoryDto>(it) }
             .toList()
     }
 }

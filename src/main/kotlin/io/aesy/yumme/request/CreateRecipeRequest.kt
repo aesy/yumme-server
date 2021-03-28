@@ -7,6 +7,7 @@ import io.aesy.yumme.conversion.DurationLongJacksonConverter
 import io.aesy.yumme.conversion.LongDurationJacksonConverter
 import io.aesy.yumme.dto.Dto
 import io.aesy.yumme.entity.User
+import io.swagger.v3.oas.annotations.Hidden
 import org.hibernate.validator.constraints.Length
 import java.time.Duration
 import javax.validation.constraints.*
@@ -39,6 +40,7 @@ data class CreateRecipeRequest(
     var categories: Set<String> = setOf()
 
     // Set by endpoint handler
+    @field:Hidden
     @field:Null
     var author: User? = null
 }

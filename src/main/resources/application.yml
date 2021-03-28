@@ -33,7 +33,15 @@ spring:
         expiration: ${TOKEN_EXPIRATION_TIME:60}
         realm: ${TOKEN_REALM:yumme}
 
+  main:
+    allow-bean-definition-overriding: true
+
 shiro:
   enabled: true
   web:
     enabled: true
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /spec

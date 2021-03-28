@@ -1,7 +1,6 @@
 package io.aesy.yumme.controller
 
 import io.aesy.yumme.auth.AuthorizedUser
-import io.aesy.yumme.conversion.ResponseBodyType
 import io.aesy.yumme.dto.RecipeDto
 import io.aesy.yumme.entity.Permission.Companion.READ_OWN_USER
 import io.aesy.yumme.entity.Permission.Companion.WRITE_OWN_USER
@@ -11,7 +10,10 @@ import io.aesy.yumme.exception.ResourceNotFound
 import io.aesy.yumme.request.CreateRecipeRequest
 import io.aesy.yumme.request.UpdateRecipeRequest
 import io.aesy.yumme.service.RecipeService
-import org.apache.shiro.authz.annotation.*
+import io.aesy.yumme.util.ModelMapper.map
+import io.swagger.v3.oas.annotations.tags.Tag
+import org.apache.shiro.authz.annotation.RequiresAuthentication
+import org.apache.shiro.authz.annotation.RequiresPermissions
 import org.modelmapper.ModelMapper
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -19,44 +21,44 @@ import javax.transaction.Transactional
 import javax.validation.Valid
 import kotlin.math.min
 
+@Tag(name = "Recipe")
 @RestController
 @RequestMapping("recipe")
 class RecipeController(
     private val recipeService: RecipeService,
-    private val modelMapper: ModelMapper
+    private val mapper: ModelMapper
 ) {
     @RequiresAuthentication
     @GetMapping("/recent")
     @Transactional
-    @ResponseBodyType(type = RecipeDto::class)
-    fun getRecentRecipes(
+    fun listRecentRecipes(
         @RequestParam(required = false, defaultValue = "10") limit: Int
-    ): List<Recipe> {
+    ): List<RecipeDto> {
         val maxLimit = 100
 
         return recipeService.getRecent(min(limit, maxLimit))
+            .map { mapper.map(it) }
     }
 
     @RequiresAuthentication
     @GetMapping("/popular")
     @Transactional
-    @ResponseBodyType(type = RecipeDto::class)
-    fun getPopularRecipes(
+    fun listPopularRecipes(
         @RequestParam(required = false, defaultValue = "10") limit: Int
-    ): List<Recipe> {
+    ): List<RecipeDto> {
         val maxLimit = 100
 
         return recipeService.getPopular(min(limit, maxLimit))
+            .map { mapper.map(it) }
     }
 
     @RequiresAuthentication
     @RequiresPermissions(READ_OWN_USER)
     @GetMapping
     @Transactional
-    @ResponseBodyType(type = RecipeDto::class)
-    fun getAllRecipes(
+    fun listRecipes(
         @AuthorizedUser user: User
-    ): List<Recipe> {
+    ): List<RecipeDto> {
         throw NotImplementedError()
 
         // return recipeService.getAll()
@@ -66,13 +68,13 @@ class RecipeController(
     @RequiresPermissions(READ_OWN_USER)
     @GetMapping("{id}")
     @Transactional
-    @ResponseBodyType(type = RecipeDto::class)
-    fun getRecipeById(
+    fun inspectRecipeById(
         @AuthorizedUser user: User,
         @PathVariable("id") id: Long
-    ): Recipe {
+    ): RecipeDto {
         return recipeService.getById(id)
             .filter { it.author.id == user.id }
+            .map { mapper.map<RecipeDto>(it) }
             .orElseThrow { ResourceNotFound() }
     }
 
@@ -81,16 +83,17 @@ class RecipeController(
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    @ResponseBodyType(type = RecipeDto::class)
     fun createRecipe(
         @AuthorizedUser user: User,
         @Valid @RequestBody request: CreateRecipeRequest
-    ): Recipe {
+    ): RecipeDto {
         request.author = user
 
-        val recipe = modelMapper.map(request, Recipe::class.java)
+        val recipe = mapper.map(request, Recipe::class.java)
 
-        return recipeService.save(recipe)
+        recipeService.save(recipe)
+
+        return mapper.map(recipe)
     }
 
     @RequiresAuthentication
@@ -98,21 +101,22 @@ class RecipeController(
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     @Transactional
-    @ResponseBodyType(type = RecipeDto::class)
     fun replaceRecipe(
         @AuthorizedUser user: User,
         @PathVariable("id") id: Long,
         @Valid @RequestBody request: CreateRecipeRequest
-    ): Recipe {
+    ): RecipeDto {
         recipeService.getById(id)
             .filter { it.author.id == user.id }
             .orElseThrow { ResourceNotFound() }
 
         request.author = user
 
-        val recipe = modelMapper.map(request, Recipe::class.java)
+        val recipe = mapper.map(request, Recipe::class.java)
 
-        return recipeService.save(recipe)
+        recipeService.save(recipe)
+
+        return mapper.map(recipe)
     }
 
     @RequiresAuthentication
@@ -120,12 +124,11 @@ class RecipeController(
     @PatchMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    @ResponseBodyType(type = RecipeDto::class)
     fun updateRecipe(
         @AuthorizedUser user: User,
         @PathVariable("id") id: Long,
         @Valid @RequestBody request: UpdateRecipeRequest
-    ): Recipe {
+    ): RecipeDto {
         recipeService.getById(id)
             .filter { it.author.id == user.id }
             .orElseThrow { ResourceNotFound() }

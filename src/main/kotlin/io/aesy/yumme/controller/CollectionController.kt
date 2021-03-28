@@ -1,29 +1,27 @@
 package io.aesy.yumme.controller
 
-import io.aesy.yumme.conversion.ResponseBodyType
 import io.aesy.yumme.dto.CollectionDto
-import io.aesy.yumme.entity.Collection
 import io.aesy.yumme.repository.CollectionRepository
-import io.aesy.yumme.util.getLogger
+import io.aesy.yumme.util.ModelMapper.map
+import io.swagger.v3.oas.annotations.tags.Tag
+import org.modelmapper.ModelMapper
 import org.springframework.web.bind.annotation.*
 import javax.transaction.Transactional
 
+@Tag(name = "Collection")
 @RestController
 class CollectionController(
-    val collectionRepository: CollectionRepository
+    private val collectionRepository: CollectionRepository,
+    private val mapper: ModelMapper
 ) {
-    companion object {
-        private val logger = getLogger()
-    }
-
     @GetMapping("collection")
     @Transactional
-    @ResponseBodyType(type = CollectionDto::class)
-    fun list(
+    fun listCollections(
         @RequestParam(required = false, defaultValue = "0") offset: Int,
         @RequestParam(required = false, defaultValue = "10") limit: Int
-    ): List<Collection> {
+    ): List<CollectionDto> {
         return collectionRepository.findAll()
+            .map { mapper.map<CollectionDto>(it) }
             .toList()
     }
 }

@@ -4,26 +4,23 @@ import io.aesy.yumme.auth.JwtService
 import io.aesy.yumme.exception.InvalidCredentials
 import io.aesy.yumme.request.LoginRequest
 import io.aesy.yumme.service.UserService
-import io.aesy.yumme.util.getLogger
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import javax.transaction.Transactional
 import javax.validation.Valid
 
+@Tag(name = "Token")
 @RestController
 @RequestMapping("auth")
-class AuthController(
+class TokenController(
     private val userService: UserService,
     private val authService: JwtService
 ) {
-    companion object {
-        private val logger = getLogger()
-    }
-
     @PostMapping("/access_token")
     @ResponseStatus(HttpStatus.OK)
     @Transactional
-    fun getAccessToken(
+    fun createAccessToken(
         @Valid @RequestBody request: LoginRequest
     ): String {
         val email = request.email!!
