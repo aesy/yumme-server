@@ -3,6 +3,8 @@ package io.aesy.yumme.auth
 import io.aesy.yumme.service.UserService
 import org.apache.shiro.authz.AuthorizationException
 import org.apache.shiro.authz.UnauthenticatedException
+import org.apache.shiro.cache.CacheManager
+import org.apache.shiro.cache.MemoryConstrainedCacheManager
 import org.apache.shiro.mgt.SessionsSecurityManager
 import org.apache.shiro.realm.Realm
 import org.apache.shiro.spring.config.AbstractShiroConfiguration
@@ -43,6 +45,11 @@ class SecurityConfiguration: AbstractShiroConfiguration(), WebMvcConfigurer {
         }
 
         return shiroFilterFactoryBean
+    }
+
+    @Bean
+    fun cacheManager(): CacheManager {
+        return MemoryConstrainedCacheManager()
     }
 
     @Bean

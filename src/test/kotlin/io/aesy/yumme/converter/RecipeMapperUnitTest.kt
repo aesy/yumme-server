@@ -6,6 +6,7 @@ import io.aesy.yumme.conversion.*
 import io.aesy.yumme.dto.RecipeDto
 import io.aesy.yumme.entity.*
 import io.aesy.yumme.repository.RatingRepository
+import io.aesy.yumme.service.RatingService
 import io.mockk.every
 import org.junit.jupiter.api.Test
 import org.modelmapper.ModelMapper
@@ -20,7 +21,8 @@ import strikt.assertions.*
         MapperConfiguration::class,
         RecipeMapperConfigurer::class,
         CategoryMapperConfigurer::class,
-        TagMapperConfigurer::class
+        TagMapperConfigurer::class,
+        RatingService::class
     ]
 )
 class RecipeMapperUnitTest {

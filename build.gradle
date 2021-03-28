@@ -70,6 +70,7 @@ dependencies {
     implementation group: "org.springframework.boot", name: "spring-boot-starter-data-jpa", version: "$spring_boot_version"
     implementation group: "org.springframework.boot", name: "spring-boot-starter-validation", version: "$spring_boot_version"
     implementation group: "org.springframework.boot", name: "spring-boot-starter-web", version: "$spring_boot_version"
+    implementation group: "org.springframework.boot", name: "spring-boot-starter-cache", version: "$spring_boot_version"
     implementation group: "org.springframework.boot", name: "spring-boot-actuator", version: "$spring_boot_version"
     implementation group: "org.apache.shiro", name: "shiro-spring-boot-web-starter", version: "1.4.1"
     implementation group: "com.fasterxml.jackson.module", name: "jackson-module-kotlin", version: "2.9.9"

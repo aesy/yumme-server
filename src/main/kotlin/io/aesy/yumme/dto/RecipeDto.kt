@@ -14,7 +14,7 @@ data class RecipeDto(
     var description: String?,
 
     @JsonProperty
-    var rating: RatingDto?,
+    var rating: RatingSummaryDto?,
 
     @JsonProperty
     var tags: Set<String> = setOf(),

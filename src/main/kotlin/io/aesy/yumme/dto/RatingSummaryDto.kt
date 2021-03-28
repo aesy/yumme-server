@@ -3,7 +3,7 @@ package io.aesy.yumme.dto
 import com.fasterxml.jackson.annotation.JsonProperty
 
 @Dto
-data class RatingDto(
+data class RatingSummaryDto(
     @JsonProperty
     var average: Double?,
 
