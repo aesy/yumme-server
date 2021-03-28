@@ -1,7 +1,7 @@
 package io.aesy.yumme.auth
 
 import io.aesy.yumme.entity.User
-import io.aesy.yumme.util.getLogger
+import io.aesy.yumme.util.Logging.getLogger
 import org.apache.shiro.SecurityUtils
 import org.springframework.core.MethodParameter
 import org.springframework.web.bind.support.WebDataBinderFactory

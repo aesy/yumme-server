@@ -1,7 +1,6 @@
 package io.aesy.yumme.conversion
 
-import io.aesy.yumme.util.getLogger
-import org.slf4j.Logger
+import io.aesy.yumme.util.Logging.getLogger
 import org.springframework.core.MethodParameter
 import org.springframework.core.annotation.Order
 import org.springframework.data.domain.Page
@@ -18,7 +17,7 @@ import javax.persistence.Entity
 @Order(Int.MAX_VALUE)
 class EntityResponseBodyBanAdvice: AbstractMappingJacksonResponseBodyAdvice() {
     companion object {
-        private val logger: Logger = getLogger()
+        private val logger = getLogger()
     }
 
     override fun beforeBodyWriteInternal(

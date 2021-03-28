@@ -1,7 +1,6 @@
 package io.aesy.yumme.auth
 
 import io.aesy.yumme.entity.*
-import io.aesy.yumme.util.getLogger
 import org.apache.shiro.authc.*
 import org.apache.shiro.authz.AuthorizationInfo
 import org.apache.shiro.authz.SimpleAuthorizationInfo
@@ -12,10 +11,6 @@ import org.springframework.beans.factory.annotation.Value
 class JwtRealm(
     private val jwtService: JwtService
 ): AuthorizingRealm() {
-    companion object {
-        private val logger = getLogger()
-    }
-
     @Value("\${spring.security.jwt.token.realm}")
     private lateinit var realm: String
 

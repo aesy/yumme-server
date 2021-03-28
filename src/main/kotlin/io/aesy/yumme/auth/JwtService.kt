@@ -6,7 +6,7 @@ import com.auth0.jwt.exceptions.JWTDecodeException
 import com.auth0.jwt.exceptions.JWTVerificationException
 import io.aesy.yumme.entity.User
 import io.aesy.yumme.service.UserService
-import io.aesy.yumme.util.getLogger
+import io.aesy.yumme.util.Logging.getLogger
 import org.apache.shiro.codec.Base64
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
