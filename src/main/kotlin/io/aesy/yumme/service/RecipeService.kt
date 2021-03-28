@@ -2,9 +2,12 @@ package io.aesy.yumme.service
 
 import io.aesy.yumme.entity.Recipe
 import io.aesy.yumme.repository.RecipeRepository
+import io.aesy.yumme.util.Logging.getLogger
+import org.springframework.cache.annotation.*
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.domain.Sort.Direction
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.util.*
 import javax.transaction.Transactional
@@ -13,12 +16,17 @@ import javax.transaction.Transactional
 class RecipeService(
     private val recipeRepository: RecipeRepository
 ) {
+    companion object {
+        private val logger = getLogger()
+    }
+
     @Transactional
     fun getAll(): List<Recipe> {
         return recipeRepository.findAll()
             .toList()
     }
 
+    @Cacheable("recent-recipes")
     @Transactional
     fun getRecent(count: Int): List<Recipe> {
         val sort = Sort.by(Direction.DESC, Recipe::createdAt.name)
@@ -28,6 +36,7 @@ class RecipeService(
             .sortedBy { it.createdAt }
     }
 
+    @Cacheable("popular-recipes")
     @Transactional
     fun getPopular(count: Int): List<Recipe> {
         val sort = Sort.by(Direction.DESC, Recipe::createdAt.name) // TODO use popularity
@@ -58,5 +67,16 @@ class RecipeService(
         recipeRepository.deleteById(id)
 
         return true
+    }
+
+    @Scheduled(fixedRate = 15 * 60 * 1000)
+    @Caching(
+        evict = [
+            CacheEvict("popular-recipes", allEntries = true),
+            CacheEvict("recent-recipes", allEntries = true)
+        ]
+    )
+    internal fun evictCache() {
+        logger.debug("Evicting recipe cache")
     }
 }
