@@ -1,5 +1,9 @@
 package io.aesy.yumme.entity
 
+import io.aesy.yumme.converter.InstantIntPersistenceConverter
+import org.hibernate.annotations.Generated
+import org.hibernate.annotations.GenerationTime
+import java.time.Instant
 import javax.persistence.*
 
 @Entity
@@ -11,12 +15,26 @@ class Rating(
     val id: Long? = null,
 
     @Column(name = "score", nullable = false)
-    val score: Int = 0,
+    var score: Int = 0,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe", nullable = false)
-    val recipe: Recipe
+    var recipe: Recipe,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user", nullable = false)
+    var user: User
 ) {
+    @Column(name = "created_at", nullable = false)
+    @Convert(converter = InstantIntPersistenceConverter::class)
+    @Generated(GenerationTime.INSERT)
+    var createdAt: Instant = Instant.now()
+
+    @Column(name = "modified_at", nullable = false)
+    @Convert(converter = InstantIntPersistenceConverter::class)
+    @Generated(GenerationTime.ALWAYS)
+    var modifiedAt: Instant = Instant.now()
+
     override fun toString(): String {
         return "Rating(id=$id, score=$score)"
     }
