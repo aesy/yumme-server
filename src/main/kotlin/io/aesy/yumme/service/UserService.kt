@@ -29,10 +29,9 @@ class UserService(
     }
 
     @Transactional
-    fun getByEmailAndPassword(email: String, password: String): Optional<User> {
-        // TODO encode password
-
-        return userRepository.findByEmailAndPassword(email, password)
+    fun getByUserNameAndPassword(userName: String, password: String): Optional<User> {
+        return userRepository.findByUserName(userName)
+            .filter { passwordService.verifyPassword(password, it.passwordHash) }
     }
 
     @Transactional
