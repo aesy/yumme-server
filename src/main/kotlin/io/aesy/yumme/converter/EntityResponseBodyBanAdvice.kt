@@ -1,4 +1,4 @@
-package io.aesy.yumme.conversion
+package io.aesy.yumme.converter
 
 import io.aesy.yumme.util.Logging.getLogger
 import org.springframework.core.MethodParameter
