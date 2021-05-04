@@ -75,7 +75,6 @@ dependencies {
     implementation group: "org.apache.shiro", name: "shiro-spring-boot-web-starter", version: "1.4.1"
     implementation group: "com.fasterxml.jackson.module", name: "jackson-module-kotlin", version: "2.9.9"
     implementation group: "at.favre.lib", name: "bcrypt", version: "0.9.0"
-    implementation group: "org.modelmapper", name: "modelmapper", version: "2.3.5"
     implementation group: "org.mariadb.jdbc", name: "mariadb-java-client", version: "2.1.0"
     implementation group: "org.flywaydb", name: "flyway-core", version: "6.5.7"
     implementation group: "com.auth0", name: "java-jwt", version: "3.8.2"

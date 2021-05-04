@@ -1,7 +1,6 @@
 package io.aesy.yumme.converter
 
 import io.aesy.test.TestType
-import io.aesy.yumme.conversion.LongDurationJacksonConverter
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
@@ -19,9 +18,9 @@ class LongDurationJacksonConverterUnitTest {
     }
 
     @Test
-    fun `It should return a duration object of 0 seconds if given a null long`() {
+    fun `It should return null if given a null long`() {
         val duration = converter.convert(null)
 
-        expectThat(duration).isEqualTo(Duration.ZERO)
+        expectThat(duration).isEqualTo(null)
     }
 }

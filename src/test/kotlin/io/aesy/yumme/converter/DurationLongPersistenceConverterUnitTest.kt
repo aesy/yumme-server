@@ -1,7 +1,6 @@
 package io.aesy.yumme.converter
 
 import io.aesy.test.TestType
-import io.aesy.yumme.conversion.DurationLongPersistenceConverter
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
@@ -19,10 +18,10 @@ class DurationLongPersistenceConverterUnitTest {
     }
 
     @Test
-    fun `It should return 0 if given a null duration object`() {
+    fun `It should return null if given a null duration object`() {
         val seconds = converter.convertToDatabaseColumn(null)
 
-        expectThat(seconds).isEqualTo(0)
+        expectThat(seconds).isEqualTo(null)
     }
 
     @Test
@@ -33,9 +32,9 @@ class DurationLongPersistenceConverterUnitTest {
     }
 
     @Test
-    fun `It should return a duration object of 0 seconds if given a null long`() {
+    fun `It should return null if given a null long`() {
         val duration = converter.convertToEntityAttribute(null)
 
-        expectThat(duration).isEqualTo(Duration.ZERO)
+        expectThat(duration).isEqualTo(null)
     }
 }

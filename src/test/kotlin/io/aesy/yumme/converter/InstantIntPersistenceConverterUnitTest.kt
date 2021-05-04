@@ -1,7 +1,6 @@
 package io.aesy.yumme.converter
 
 import io.aesy.test.TestType
-import io.aesy.yumme.conversion.InstantIntPersistenceConverter
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
@@ -19,10 +18,10 @@ class InstantIntPersistenceConverterUnitTest {
     }
 
     @Test
-    fun `It should return 0 if given a null instant object`() {
+    fun `It should return null if given a null instant object`() {
         val seconds = converter.convertToDatabaseColumn(null)
 
-        expectThat(seconds).isEqualTo(0)
+        expectThat(seconds).isEqualTo(null)
     }
 
     @Test
@@ -33,9 +32,9 @@ class InstantIntPersistenceConverterUnitTest {
     }
 
     @Test
-    fun `It should return an instant object of 0 seconds if given a null int`() {
+    fun `It should return null if given a null int`() {
         val instant = converter.convertToEntityAttribute(null)
 
-        expectThat(instant).isEqualTo(Instant.EPOCH)
+        expectThat(instant).isEqualTo(null)
     }
 }
