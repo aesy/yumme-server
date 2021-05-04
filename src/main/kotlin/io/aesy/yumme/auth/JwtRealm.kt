@@ -40,19 +40,11 @@ class JwtRealm(
 
     @Throws(AuthenticationException::class)
     override fun doGetAuthenticationInfo(auth: AuthenticationToken): AuthenticationInfo? {
-        val accessToken = auth.credentials as String
-        val userOptional = jwtService.getUser(accessToken)
+        val token = auth.credentials as String
 
-        if (!userOptional.isPresent) {
-            return null
-        }
-
-        val user = userOptional.get()
-
-        if (!jwtService.validateToken(accessToken, user)) {
-            return null
-        }
-
-        return SimpleAuthenticationInfo(user, accessToken, realm)
+        return jwtService.getUserByToken(token)
+            .filter { jwtService.validateToken(token, it) }
+            .map { SimpleAuthenticationInfo(it, token, realm) }
+            .orElse(null)
     }
 }

@@ -2,7 +2,6 @@ package io.aesy.yumme.auth
 
 import io.aesy.yumme.util.Logging.getLogger
 import org.apache.shiro.authc.AuthenticationToken
-import org.apache.shiro.codec.Base64
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter
 import org.apache.shiro.web.util.WebUtils
 import org.springframework.beans.factory.annotation.Value
@@ -117,6 +116,7 @@ class BearerAuthFilter: AuthenticatingFilter() {
         return false
     }
 
+    @Throws(Exception::class)
     override fun createToken(request: ServletRequest, response: ServletResponse): AuthenticationToken {
         val authorizationHeader = getAuthzHeader(request)
 
@@ -126,42 +126,16 @@ class BearerAuthFilter: AuthenticatingFilter() {
 
         logger.debug("Attempting to execute login with auth header")
 
-        val prinCred = getPrincipalsAndCredentials(authorizationHeader, request)
+        val token = getToken(authorizationHeader, request)
 
-        if (prinCred == null || prinCred.size < 2) {
-            val username = if (prinCred == null || prinCred.isEmpty()) "" else prinCred[0]
-
-            // TODO return JwtToken
-            return createToken(username, "", request, response)
-        }
-
-        val username = prinCred[0]
-        val password = prinCred[1]
-
-        // TODO return JwtToken
-        return createToken(username, password, request, response)
+        return JwtToken(token)
     }
 
-    protected fun getPrincipalsAndCredentials(authorizationHeader: String?, request: ServletRequest): Array<String>? {
-        if (authorizationHeader == null) {
-            return null
-        }
+    protected fun getToken(authzHeader: String, request: ServletRequest): String {
+        val authzScheme = AUTHZ_SCHEME.toLowerCase(Locale.ENGLISH)
 
-        val authTokens = authorizationHeader.split(" ".toRegex())
-            .dropLastWhile { it.isEmpty() }
-            .toTypedArray()
-
-        if (authTokens.size < 2) {
-            return null
-        }
-
-        return getPrincipalsAndCredentials(authTokens[0], authTokens[1])
-    }
-
-    protected fun getPrincipalsAndCredentials(scheme: String, encoded: String): Array<String> {
-        val decoded = Base64.decodeToString(encoded)
-
-        return decoded.split(":".toRegex(), 2)
-            .toTypedArray()
+        return authzHeader
+            .substring(authzScheme.length)
+            .trim()
     }
 }

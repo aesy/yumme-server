@@ -23,19 +23,19 @@ class JwtService(
         private val logger = getLogger()
     }
 
-    @Value("\${spring.security.jwt.token.secret}")
-    private lateinit var secret: String
+    @Value("\${yumme.security.jwt.signing-key}")
+    private lateinit var signingKey: String
 
-    @Value("\${spring.security.jwt.token.expiration}")
-    private var expireMinutes: Long = 0
+    @Value("\${yumme.security.jwt.expiration-minutes}")
+    private var expirationMinutes: Long = 0
 
     @PostConstruct
     private fun init() {
-        this.secret = Base64.encodeToString(secret.toByteArray())
+        this.signingKey = Base64.encodeToString(signingKey.toByteArray())
     }
 
     fun validateToken(token: String, user: User): Boolean {
-        val algorithm = Algorithm.HMAC256(secret)
+        val algorithm = Algorithm.HMAC256(signingKey)
 
         try {
             JWT.require(algorithm)
@@ -45,7 +45,7 @@ class JwtService(
 
             return true
         } catch (e: JWTVerificationException) {
-            logger.info("Failed to verify JWT token of user ${user.email}. ${e.message}")
+            logger.info("Failed to verify JWT token of user ${user.userName}. ${e.message}")
         }
 
         return false
@@ -53,8 +53,8 @@ class JwtService(
 
     fun createToken(user: User): String {
         val date = Instant.now()
-            .plus(expireMinutes, ChronoUnit.SECONDS)
-        val algorithm = Algorithm.HMAC256(secret)
+            .plus(expirationMinutes, ChronoUnit.MINUTES)
+        val algorithm = Algorithm.HMAC256(signingKey)
 
         return JWT.create()
             .withSubject(user.email)
@@ -62,18 +62,17 @@ class JwtService(
             .sign(algorithm)
     }
 
-    fun getUser(accessToken: String): Optional<User> {
+    fun getUserByToken(token: String): Optional<User> {
         try {
-            val email = JWT.decode(accessToken)
-                .subject
+            val userName = JWT.decode(token).subject
 
-            if (email == null) {
+            if (userName == null) {
                 logger.info("Failed to extract subject from JWT token. It's missing.")
 
                 return Optional.empty()
             }
 
-            return userService.getByEmail("test@test.com")
+            return userService.getByUserName(userName)
         } catch (e: JWTDecodeException) {
             logger.info("Failed to decode JWT token to be able to extract subject. ${e.message}")
         }
