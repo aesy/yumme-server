@@ -2,6 +2,7 @@ package io.aesy.yumme.repository
 
 import io.aesy.test.TestType
 import io.aesy.yumme.entity.User
+import io.aesy.yumme.util.Users
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import strikt.api.expectThat
@@ -15,31 +16,28 @@ class UserRepositoryPersistenceTest {
 
     @Test
     fun `It should be possible to persist a user`() {
-        val user = User(email = "test@test.com", password = "secret")
-        userRepository.save(user)
+        val user = userRepository.save(Users.random())
 
         expectThat(user.id).isNotNull()
     }
 
     @Test
-    fun `It should be possible to fetch a user by email`() {
-        val email = "test@test.com"
-        val user = User(email = email, password = "secret")
-        userRepository.save(user)
+    fun `It should be possible to fetch a user by user name`() {
+        val userName = "test"
+        userRepository.save(User(userName = userName, displayName = "woop", passwordHash = "secret"))
 
-        val result = userRepository.findByEmail(email)
+        val result = userRepository.findByUserName(userName)
 
         expectThat(result).isPresent()
     }
 
     @Test
-    fun `It should be possible to fetch a user by email and password`() {
-        val email = "test@test.com"
-        val password = "secret"
-        val user = User(email = email, password = password)
-        userRepository.save(user)
+    fun `It should be possible to fetch a user by user name and password hash`() {
+        val userName = "test"
+        val passwordHash = "secret"
+        userRepository.save(User(userName = userName, displayName = "woop", passwordHash = passwordHash))
 
-        val result = userRepository.findByEmailAndPassword(email, password)
+        val result = userRepository.findByUserNameAndPasswordHash(userName, passwordHash)
 
         expectThat(result).isPresent()
     }

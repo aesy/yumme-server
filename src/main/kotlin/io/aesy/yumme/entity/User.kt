@@ -1,12 +1,15 @@
 package io.aesy.yumme.entity
 
-import org.hibernate.annotations.SQLDelete
-import org.hibernate.annotations.Where
+import io.aesy.yumme.converter.InstantIntPersistenceConverter
+import org.hibernate.annotations.*
+import java.time.Instant
 import javax.persistence.*
+import javax.persistence.Entity
+import javax.persistence.Table
 
 @Entity
 @Table(name = "user")
-@Where(clause = "deleted_at = 0 AND suspended_at = 0")
+@Where(clause = "deleted_at IS NULL AND suspended_at IS NULL")
 @SQLDelete(sql = "proc_user_delete", callable = true)
 class User(
     @Id
@@ -14,21 +17,34 @@ class User(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
-    @Column(name = "email", nullable = false)
-    val email: String,
+    @Column(name = "user_name", unique = true, nullable = false)
+    var userName: String,
+
+    @Column(name = "display_name", nullable = false)
+    var displayName: String,
 
     @Column(name = "password", nullable = false)
-    val password: String,
+    var passwordHash: String,
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "user_has_role",
         joinColumns = [JoinColumn(name = "user")],
         inverseJoinColumns = [JoinColumn(name = "role")]
     )
-    val roles: MutableSet<Role> = mutableSetOf()
+    var roles: MutableSet<Role> = mutableSetOf()
 ) {
+    @Column(name = "created_at", nullable = false)
+    @Convert(converter = InstantIntPersistenceConverter::class)
+    @Generated(GenerationTime.INSERT)
+    var createdAt: Instant = Instant.now()
+
+    @Column(name = "modified_at", nullable = false)
+    @Convert(converter = InstantIntPersistenceConverter::class)
+    @Generated(GenerationTime.ALWAYS)
+    var modifiedAt: Instant = Instant.now()
+
     override fun toString(): String {
-        return "User(id=$id, email='$email')"
+        return "User(id=$id, name='$userName')"
     }
 }

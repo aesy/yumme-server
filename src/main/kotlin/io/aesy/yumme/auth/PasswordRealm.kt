@@ -42,16 +42,11 @@ class PasswordRealm(
     @Throws(AuthenticationException::class)
     override fun doGetAuthenticationInfo(auth: AuthenticationToken): AuthenticationInfo? {
         val token = auth as UsernamePasswordToken
-        val email = token.username
+        val name = token.username
         val password = String(token.password)
-        val userOptional = userService.getByEmailAndPassword(email, password)
 
-        if (!userOptional.isPresent) {
-            return null
-        }
-
-        val user = userOptional.get()
-
-        return SimpleAuthenticationInfo(user, password, realm)
+        return userService.getByUserNameAndPassword(name, password)
+            .map { SimpleAuthenticationInfo(it, password, realm) }
+            .orElse(null)
     }
 }

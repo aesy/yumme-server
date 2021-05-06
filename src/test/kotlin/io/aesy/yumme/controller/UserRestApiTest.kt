@@ -1,17 +1,17 @@
 package io.aesy.yumme.controller
 
 import io.aesy.test.TestType
+import io.aesy.yumme.dto.RegisterRequest
 import io.aesy.yumme.dto.UserDto
-import io.aesy.yumme.entity.User
-import io.aesy.yumme.request.RegisterRequest
 import io.aesy.yumme.service.UserService
+import io.aesy.yumme.util.Users.createUser
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.*
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import strikt.api.expectThat
-import strikt.assertions.*
+import strikt.assertions.isEqualTo
+import strikt.assertions.isNotNull
 
 @TestType.RestApi
 class UserRestApiTest {
@@ -23,10 +23,8 @@ class UserRestApiTest {
 
     @Test
     fun `It should be possible to fetch the authenticated user`() {
-        val email = "test@test.com"
-        val password = "secret"
-        userService.save(User(email = email, password = password))
-        val response = restTemplate.withBasicAuth(email, password)
+        val user = userService.createUser("test", "woop", "secret123")
+        val response = restTemplate.withBasicAuth(user.userName, "secret123")
             .getForEntity<UserDto>("/user/me")
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
@@ -35,27 +33,24 @@ class UserRestApiTest {
 
     @Test
     fun `It should not be possible to fetch an unauthenticated user`() {
-        val response = restTemplate.getForEntity<UserDto>("/user/me")
+        val response = restTemplate.getForEntity<Unit>("/user/me")
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.UNAUTHORIZED)
     }
 
     @Test
     fun `It should be possible to register a new user`() {
-        val request = RegisterRequest("test", "test", "test@test.com", "secret")
+        val request = RegisterRequest("test", "woop", "secret123")
         val response = restTemplate.postForEntity<String>("/user/register", request)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.CREATED)
-        expectThat(response.body).isNotNull().isNotBlank()
-        expectThat(response.headers).hasEntry(HttpHeaders.CONTENT_TYPE, listOf("text/plain;charset=UTF-8"))
     }
 
     @Test
-    fun `It should not be possible to register a user with an already used email`() {
-        val email = "conflict@test.com"
-        userService.save(User(email = email, password = "secret"))
-        val request = RegisterRequest("test", "test", email, "secret")
-        val response = restTemplate.postForEntity<String>("/user/register", request)
+    fun `It should not be possible to register a user with an already used name`() {
+        val user = userService.createUser("test", "woop", "secret123")
+        val request = RegisterRequest(user.userName, "woop", "secret321")
+        val response = restTemplate.postForEntity<Unit>("/user/register", request)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.CONFLICT)
     }

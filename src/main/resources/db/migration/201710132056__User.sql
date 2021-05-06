@@ -1,17 +1,18 @@
 CREATE TABLE `user` (
     `id` int unsigned NOT NULL AUTO_INCREMENT,
-    `email` varchar(64) NOT NULL UNIQUE,
-    `password` varchar(64) NOT NULL,
+    `user_name` varchar(64) NOT NULL UNIQUE,
+    `display_name` varchar(64) NOT NULL,
+    `password` char(72) NOT NULL,
     `created_at` int unsigned NOT NULL DEFAULT 0,
     `modified_at` int unsigned NOT NULL DEFAULT 0,
-    `deleted_at` int unsigned NOT NULL DEFAULT 0,
-    `suspended_at` int unsigned NOT NULL DEFAULT 0,
+    `deleted_at` int unsigned DEFAULT NULL,
+    `suspended_at` int unsigned DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `user`
-    ADD INDEX (`email`),
-    ADD INDEX (`email`, `password`);
+    ADD INDEX (`user_name`),
+    ADD INDEX (`user_name`, `password`);
 
 DELIMITER $$
 CREATE TRIGGER `trig_user_insert` BEFORE INSERT ON `user`
@@ -28,7 +29,7 @@ FOR EACH ROW
 DELIMITER ;
 
 DELIMITER $$
-CREATE TRIGGER `trig_user_update` BEFORE UPDATE ON user
+CREATE TRIGGER `trig_user_update` BEFORE UPDATE ON `user`
 FOR EACH ROW
     BEGIN
         IF (new.`modified_at` = 0) THEN
@@ -44,7 +45,8 @@ BEGIN
         EXISTS(
             SELECT *
             FROM `user`
-            WHERE `id` = `user_id` AND `deleted_at` > 0
+            WHERE `id` = `user_id`
+              AND `deleted_at` IS NOT NULL
         );
 END $$
 DELIMITER ;
@@ -56,7 +58,8 @@ BEGIN
         EXISTS(
             SELECT *
             FROM `user`
-            WHERE `id` = `user_id` AND `suspended_at` > 0
+            WHERE `id` = `user_id`
+              AND `suspended_at` IS NOT NULL
         );
 END $$
 DELIMITER ;

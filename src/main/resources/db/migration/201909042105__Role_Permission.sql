@@ -16,7 +16,7 @@ CREATE TABLE `permission` (
 CREATE TABLE `user_has_role` (
     `user` int unsigned NOT NULL,
     `role` int unsigned NOT NULL,
-    `assigned_at` INT UNSIGNED NOT NULL DEFAULT 0,
+    `assigned_at` int unsigned NOT NULL DEFAULT 0,
     PRIMARY KEY (`user`, `role`),
     FOREIGN KEY (`user`) REFERENCES `user` (`id`)
         ON UPDATE CASCADE
@@ -39,7 +39,7 @@ DELIMITER ;
 CREATE TABLE `role_grants_permission` (
     `role` int unsigned NOT NULL,
     `permission` int unsigned NOT NULL,
-    `assigned_at` INT UNSIGNED NOT NULL DEFAULT 0,
+    `assigned_at` int unsigned NOT NULL DEFAULT 0,
     PRIMARY KEY (`role`, `permission`),
     FOREIGN KEY (`role`) REFERENCES `role` (`id`)
         ON UPDATE CASCADE
