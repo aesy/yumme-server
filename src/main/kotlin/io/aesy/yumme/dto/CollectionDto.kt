@@ -3,10 +3,13 @@ package io.aesy.yumme.dto
 import com.fasterxml.jackson.annotation.JsonProperty
 
 @Dto
-data class CollectionDto(
+class CollectionDto(
     @JsonProperty
-    val title: String,
+    var id: Long?,
 
     @JsonProperty
-    val recipes: List<String> = arrayListOf()
+    var title: String?,
+
+    @JsonProperty
+    var recipes: MutableSet<Long> = mutableSetOf()
 )

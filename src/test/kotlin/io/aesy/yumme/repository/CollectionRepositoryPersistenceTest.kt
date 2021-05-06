@@ -2,8 +2,8 @@ package io.aesy.yumme.repository
 
 import io.aesy.test.TestType
 import io.aesy.yumme.entity.Collection
-import io.aesy.yumme.entity.User
-import org.junit.jupiter.api.Disabled
+import io.aesy.yumme.util.Recipes
+import io.aesy.yumme.util.Users
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import strikt.api.expectThat
@@ -15,30 +15,33 @@ class CollectionRepositoryPersistenceTest {
     private lateinit var collectionRepository: CollectionRepository
 
     @Autowired
+    private lateinit var recipeRepository: RecipeRepository
+
+    @Autowired
     private lateinit var userRepository: UserRepository
 
     @Test
     fun `It should be possible to persist a collection`() {
-        val user = User(email = "test@test.com", password = "secret")
-        userRepository.save(user)
-
-        val collection = Collection(title = "woop", owner = user)
+        val author = userRepository.save(Users.random())
+        val recipe = recipeRepository.save(Recipes.random(author))
+        val collection = collectionRepository.save(Collection(title = "woop", owner = author))
+        collection.recipes.add(recipe)
         collectionRepository.save(collection)
 
         expectThat(collection.id).isNotNull()
     }
 
     @Test
-    @Disabled("Filepeek dependency is unavailable, see github.com/robfletcher/strikt/issues/242")
     fun `It should be possible to fetch collections by owner`() {
-        val user = User(email = "test@test.com", password = "secret")
-        userRepository.save(user)
+        val user1 = userRepository.save(Users.random())
+        val user2 = userRepository.save(Users.random())
+        val collection = collectionRepository.save(Collection(title = "woop", owner = user1))
+        collectionRepository.save(Collection(title = "woop", owner = user2)) // Should not be included
 
-        val collection = Collection(title = "woop", owner = user)
-        collectionRepository.save(collection)
+        val result = collectionRepository.findByOwner(user1)
 
-        val collections = collectionRepository.findByOwner(user)
-
-        expectThat(collections).map(Collection::id).containsExactly(collection.id)
+        expectThat(result)
+            .map(Collection::id)
+            .containsExactly(collection.id)
     }
 }

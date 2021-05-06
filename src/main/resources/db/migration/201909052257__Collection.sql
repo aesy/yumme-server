@@ -2,12 +2,17 @@ CREATE TABLE `collection` (
     `id` int unsigned NOT NULL AUTO_INCREMENT,
     `name` varchar(64) NOT NULL,
     `owner` int unsigned NOT NULL,
+    `public` tinyint(1) NOT NULL DEFAULT 0,
     `created_at` int unsigned NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`owner`) REFERENCES `user` (`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `collection`
+    ADD INDEX (`public`),
+    ADD INDEX (`created_at`);
 
 DELIMITER $$
 CREATE TRIGGER `trig_collection_insert` BEFORE INSERT ON `collection`
