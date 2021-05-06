@@ -1,11 +1,11 @@
 package io.aesy.yumme.service
 
 import io.aesy.yumme.entity.Recipe
+import io.aesy.yumme.entity.User
 import io.aesy.yumme.repository.RecipeRepository
 import io.aesy.yumme.util.Logging.getLogger
 import org.springframework.cache.annotation.*
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Sort
+import org.springframework.data.domain.*
 import org.springframework.data.domain.Sort.Direction
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -20,20 +20,13 @@ class RecipeService(
         private val logger = getLogger()
     }
 
-    @Transactional
-    fun getAll(): List<Recipe> {
-        return recipeRepository.findAll()
-            .toList()
-    }
-
     @Cacheable("recent-recipes")
     @Transactional
     fun getRecent(count: Int): List<Recipe> {
-        val sort = Sort.by(Direction.DESC, Recipe::createdAt.name)
+        val sort = Sort.by(Direction.ASC, Recipe::createdAt.name)
         val page = PageRequest.of(0, count, sort)
 
         return recipeRepository.findAllPublic(page)
-            .sortedBy { it.createdAt }
     }
 
     @Cacheable("popular-recipes")
@@ -51,22 +44,35 @@ class RecipeService(
     }
 
     @Transactional
+    fun getByAuthor(author: User, limit: Int = 0, offset: Int = 0): List<Recipe> {
+        val page = if (limit > 0) {
+            PageRequest.of(offset, limit)
+        } else {
+            Pageable.unpaged()
+        }
+
+        return recipeRepository.findAllByAuthor(author, page)
+    }
+
+    @Transactional
+    fun getPublicByAuthor(author: User, limit: Int = 0, offset: Int = 0): List<Recipe> {
+        val page = if (limit > 0) {
+            PageRequest.of(offset, limit)
+        } else {
+            Pageable.unpaged()
+        }
+
+        return recipeRepository.findAllPublicByAuthor(author, page)
+    }
+
+    @Transactional
     fun save(recipe: Recipe): Recipe {
         return recipeRepository.save(recipe)
     }
 
     @Transactional
-    fun delete(recipe: Recipe): Boolean {
+    fun delete(recipe: Recipe) {
         recipeRepository.delete(recipe)
-
-        return true
-    }
-
-    @Transactional
-    fun deleteById(id: Long): Boolean {
-        recipeRepository.deleteById(id)
-
-        return true
     }
 
     @Scheduled(fixedRate = 15 * 60 * 1000)

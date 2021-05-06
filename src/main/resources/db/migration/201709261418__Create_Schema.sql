@@ -2,7 +2,10 @@ CREATE TABLE `recipe` (
     `id` int unsigned NOT NULL AUTO_INCREMENT,
     `title` varchar(64) NOT NULL,
     `description` text NOT NULL,
-    `approximate_completion_time` int unsigned NOT NULL,
+    `directions` text NOT NULL,
+    `prep_time` int unsigned NOT NULL,
+    `cook_time` int unsigned NOT NULL,
+    `yield` int unsigned NOT NULL,
     `public` tinyint(1) NOT NULL DEFAULT 0,
     `created_at` int unsigned NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`)
@@ -52,7 +55,7 @@ FOR EACH ROW
 DELIMITER ;
 
 DELIMITER $$
-CREATE TRIGGER `trig_rating_update` BEFORE UPDATE ON rating
+CREATE TRIGGER `trig_rating_update` BEFORE UPDATE ON `rating`
 FOR EACH ROW
     BEGIN
         IF (new.`modified_at` = 0) THEN

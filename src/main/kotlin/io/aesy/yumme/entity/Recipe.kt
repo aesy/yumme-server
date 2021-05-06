@@ -1,7 +1,7 @@
 package io.aesy.yumme.entity
 
-import io.aesy.yumme.conversion.DurationLongPersistenceConverter
-import io.aesy.yumme.conversion.InstantIntPersistenceConverter
+import io.aesy.yumme.converter.DurationLongPersistenceConverter
+import io.aesy.yumme.converter.InstantIntPersistenceConverter
 import org.hibernate.annotations.Generated
 import org.hibernate.annotations.GenerationTime
 import java.time.Duration
@@ -14,7 +14,7 @@ class Recipe(
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null,
+    var id: Long? = null,
 
     @Column(name = "title", nullable = false)
     var title: String,
@@ -22,16 +22,26 @@ class Recipe(
     @Column(name = "description", nullable = false)
     var description: String,
 
+    @Column(name = "directions", nullable = false)
+    var directions: String,
+
+    @Convert(converter = DurationLongPersistenceConverter::class)
+    @Column(name = "prep_time", nullable = false)
+    var prepTime: Duration,
+
+    @Convert(converter = DurationLongPersistenceConverter::class)
+    @Column(name = "cook_time", nullable = false)
+    var cookTime: Duration,
+
+    @Column(name = "yield", nullable = false)
+    var yield: Int,
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author", nullable = false)
     var author: User
 ) {
     @Column(name = "public", nullable = false)
     var public: Boolean = false
-
-    @Convert(converter = DurationLongPersistenceConverter::class)
-    @Column(name = "approximate_completion_time", nullable = false)
-    var completionTime: Duration = Duration.ZERO
 
     @Column(name = "created_at", nullable = false)
     @Convert(converter = InstantIntPersistenceConverter::class)
@@ -56,6 +66,14 @@ class Recipe(
         inverseJoinColumns = [JoinColumn(name = "category")]
     )
     var categories: MutableSet<Category> = mutableSetOf()
+
+    @OneToMany(
+        mappedBy = "recipe",
+        fetch = FetchType.LAZY,
+        cascade = [CascadeType.ALL],
+        orphanRemoval = true
+    )
+    var imageUploadMappings: MutableSet<RecipeHasImageUpload> = mutableSetOf()
 
     override fun toString(): String {
         return "Recipe(id=$id, title='$title')"
