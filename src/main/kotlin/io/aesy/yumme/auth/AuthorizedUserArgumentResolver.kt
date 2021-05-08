@@ -8,7 +8,6 @@ import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.method.support.ModelAndViewContainer
-import org.springframework.web.server.ResponseStatusException
 
 class AuthorizedUserArgumentResolver: HandlerMethodArgumentResolver {
     companion object {
@@ -23,7 +22,6 @@ class AuthorizedUserArgumentResolver: HandlerMethodArgumentResolver {
         return parameter.hasParameterAnnotation(AuthorizedUser::class.java)
     }
 
-    @Throws(ResponseStatusException::class)
     override fun resolveArgument(
         parameter: MethodParameter,
         mavContainer: ModelAndViewContainer?,

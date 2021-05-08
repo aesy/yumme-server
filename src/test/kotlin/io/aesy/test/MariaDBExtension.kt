@@ -2,15 +2,14 @@ package io.aesy.test
 
 import org.flywaydb.core.Flyway
 import org.junit.jupiter.api.extension.*
-import org.junit.jupiter.api.extension.ExtensionContext.Namespace
+import org.junit.jupiter.api.extension.ExtensionContext.*
 import org.springframework.beans.factory.getBean
 import org.springframework.context.ApplicationContext
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.testcontainers.containers.MariaDBContainer
 import java.util.*
 
-class MariaDBExtension:
-    BeforeAllCallback, BeforeEachCallback, AfterEachCallback, ExtensionContext.Store.CloseableResource {
+class MariaDBExtension: BeforeAllCallback, BeforeEachCallback, AfterEachCallback, Store.CloseableResource {
 
     companion object {
         private const val DATABASE_NAME = "yumme-test"
@@ -27,7 +26,7 @@ class MariaDBExtension:
             System.setProperty("spring.datasource.username", container!!.username)
             System.setProperty("spring.datasource.password", container!!.password)
 
-            // The following line registers a callback hook when the root test context is shut down
+            // Register a callback for when the root test context is shut down
             context.root.getStore(Namespace.GLOBAL).put(MariaDBExtension::class.qualifiedName, this)
         }
     }
@@ -50,12 +49,13 @@ class MariaDBExtension:
         Optional.empty()
     }
 
-    private fun create(): MariaDBContainer<Nothing> = MariaDBContainer<Nothing>("mariadb:10").apply {
-        withDatabaseName(DATABASE_NAME)
-        withUsername("test")
-        withPassword("test")
-        start()
-    }
+    private fun create(): MariaDBContainer<Nothing> = MariaDBContainer<Nothing>("mariadb:10")
+        .apply {
+            withDatabaseName(DATABASE_NAME)
+            withUsername("test")
+            withPassword("test")
+            start()
+        }
 
     private fun clean(context: ApplicationContext) {
         val flyway = context.getBean<Flyway>()
