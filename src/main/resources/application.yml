@@ -26,12 +26,10 @@ spring:
     sql-migration-prefix:
     baseline-on-migrate: true
 
-  security:
-    jwt:
-      token:
-        secret: ${TOKEN_SECRET:secret}
-        expiration: ${TOKEN_EXPIRATION_TIME:60}
-        realm: ${TOKEN_REALM:yumme}
+  servlet:
+    multipart:
+      max-file-size: 4MB
+      max-request-size: 4MB
 
   main:
     allow-bean-definition-overriding: true
