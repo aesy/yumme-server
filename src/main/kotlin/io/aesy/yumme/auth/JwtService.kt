@@ -39,7 +39,7 @@ class JwtService(
 
         try {
             JWT.require(algorithm)
-                .withSubject(user.email)
+                .withSubject(user.userName)
                 .build()
                 .verify(token)
 
@@ -57,7 +57,9 @@ class JwtService(
         val algorithm = Algorithm.HMAC256(signingKey)
 
         return JWT.create()
-            .withSubject(user.email)
+            .withSubject(user.userName)
+            .withArrayClaim("role", user.roles.map { it.name }.toTypedArray())
+            .withClaim("ref", UUID.randomUUID().toString()) // Reference id to make every token unique
             .withExpiresAt(Date.from(date))
             .sign(algorithm)
     }

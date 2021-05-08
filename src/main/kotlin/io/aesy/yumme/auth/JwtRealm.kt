@@ -29,11 +29,9 @@ class JwtRealm(
             return null
         }
 
-        // TODO get roles and permissions from token
         val authInfo = SimpleAuthorizationInfo()
-        authInfo.addRoles(setOf(Role.USER))
-        val permissions = setOf(Permission.READ_OWN_USER, Permission.WRITE_OWN_USER)
-        authInfo.addStringPermissions(permissions)
+        val roles = principal.roles.map(Role::name)
+        authInfo.addRoles(roles)
 
         return authInfo
     }
