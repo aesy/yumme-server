@@ -1,6 +1,7 @@
 package io.aesy.yumme.controller
 
 import io.aesy.test.TestType
+import io.aesy.yumme.dto.ErrorDto
 import io.aesy.yumme.dto.RoleDto
 import io.aesy.yumme.entity.Role
 import io.aesy.yumme.service.UserService
@@ -10,6 +11,7 @@ import io.aesy.yumme.util.Users.createUser
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.test.web.client.getForEntity
 import org.springframework.http.HttpStatus
 import strikt.api.expectThat
 import strikt.assertions.*
@@ -43,7 +45,7 @@ class RoleRestApiTest {
         val user = userService.createUser("test", "woop", "secret")
 
         val response = restTemplate.withBasicAuth(user.userName, "secret")
-            .getList<Unit>("/role")
+            .getForEntity<ErrorDto>("/role")
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
     }
@@ -69,7 +71,7 @@ class RoleRestApiTest {
         val user = userService.createUser("test", "woop", "secret")
 
         val response = restTemplate.withBasicAuth(user.userName, "secret")
-            .getList<Unit>("/user/${user.id}/role")
+            .getForEntity<ErrorDto>("/user/${user.id}/role")
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
     }
