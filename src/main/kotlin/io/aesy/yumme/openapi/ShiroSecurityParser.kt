@@ -21,11 +21,11 @@ class ShiroSecurityParser: SecurityParser() {
             val scopes = mutableListOf<String>()
 
             if (roles != null) {
-                scopes.addAll(roles.value)
+                scopes.addAll(roles.value.map { "role:$it" })
             }
 
             if (permissions != null) {
-                scopes.addAll(permissions.value)
+                scopes.addAll(permissions.value.map { "permission:$it" })
             }
 
             val requirements = arrayOf(
