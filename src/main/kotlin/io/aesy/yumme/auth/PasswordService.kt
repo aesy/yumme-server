@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class PasswordService {
-    @Value("\${spring.security.pepper:secret}")
+    @Value("\${yumme.security.pepper}")
     private lateinit var pepper: String
 
     fun encodePassword(password: String): String {

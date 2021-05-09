@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class BasicAuthFilter: BasicHttpAuthenticationFilter() {
-    @Value("\${spring.security.jwt.token.realm}")
+    @Value("\${yumme.security.realm}")
     private lateinit var realm: String
 
     override fun getApplicationName(): String {

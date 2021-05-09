@@ -1,3 +1,18 @@
+yumme:
+  admin:
+    username: ${ADMIN_USERNAME:admin}
+    password: ${ADMIN_PASSWORD:admin}
+
+  storage:
+    directory: ${STORAGE_DIRECTORY:uploads/}
+
+  security:
+    pepper: ${PASSWORD_PEPPER:secret}
+    realm: ${TOKEN_REALM:yumme}
+    jwt:
+      signing-key: ${JWT_SIGNING_KEY:secret}
+      expiration-minutes: ${JWT_EXPIRATION_MINUTES:60}
+
 server:
   port: ${PORT:8080}
   servlet:

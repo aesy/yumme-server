@@ -1,0 +1,32 @@
+{
+  "properties": [
+    {
+      "name": "yumme.admin.username",
+      "type": "java.lang.String"
+    }, {
+      "name": "yumme.admin.password",
+      "type": "java.lang.String"
+    }, {
+      "name": "yumme.storage.directory",
+      "type": "java.lang.String"
+    }, {
+      "name": "yumme.security.realm",
+      "type": "java.lang.String"
+    }, {
+      "name": "yumme.security.pepper",
+      "type": "java.lang.String"
+    }, {
+      "name": "yumme.security.jwt.signing-key",
+      "type": "java.lang.String"
+    }, {
+      "name": "yumme.security.jwt.expiration-minutes",
+      "type": "java.lang.String"
+    }, {
+      "name": "springdoc.api-docs.enabled",
+      "type": "java.lang.Boolean"
+    }, {
+      "name": "springdoc.api-docs.path",
+      "type": "java.lang.String"
+    }
+  ]
+}
