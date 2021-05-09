@@ -1,60 +1,59 @@
 package io.aesy.yumme.controller
 
+import io.aesy.yumme.auth.AuthorizedUser
 import io.aesy.yumme.dto.CategoryDto
+import io.aesy.yumme.entity.User
 import io.aesy.yumme.exception.ResourceNotFound
+import io.aesy.yumme.mapper.CategoryMapper
 import io.aesy.yumme.service.CategoryService
 import io.aesy.yumme.service.RecipeService
-import io.aesy.yumme.util.ModelMapper.map
+import io.aesy.yumme.util.AccessControl.canRead
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.modelmapper.ModelMapper
+import org.apache.shiro.authz.annotation.RequiresAuthentication
+import org.springframework.http.MediaType
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import javax.transaction.Transactional
+import kotlin.math.min
 
 @Tag(name = "Category")
 @RestController
+@RequestMapping(
+    consumes = [MediaType.APPLICATION_JSON_VALUE, MediaType.ALL_VALUE],
+    produces = [MediaType.APPLICATION_JSON_VALUE]
+)
+@Validated
 class CategoryController(
     private val recipeService: RecipeService,
     private val categoryService: CategoryService,
-    private val mapper: ModelMapper
+    private val mapper: CategoryMapper
 ) {
+    @RequiresAuthentication
     @GetMapping("/category")
     @Transactional
-    fun listCategories(
+    fun listAllCategories(
         @RequestParam(required = false, defaultValue = "0") offset: Int,
         @RequestParam(required = false, defaultValue = "10") limit: Int
     ): List<CategoryDto> {
-        return categoryService.getAll()
-            .asSequence()
-            .sortedBy { it.name }
-            .map { mapper.map<CategoryDto>(it) }
-            .toList()
+        val maxLimit = 100
+
+        return categoryService.getAll(min(limit, maxLimit), offset)
+            .map(mapper::toDto)
     }
 
-    @GetMapping("/category/{id}")
-    @Transactional
-    fun inspectCategoryById(
-        @PathVariable(required = true, value = "id") id: Long
-    ): CategoryDto {
-        return categoryService.getById(id)
-            .map { mapper.map<CategoryDto>(it) }
-            .orElseThrow { ResourceNotFound() }
-    }
-
+    @RequiresAuthentication
     @GetMapping("/recipe/{id}/category")
     @Transactional
     @Tag(name = "Recipe")
     fun listCategoriesByRecipe(
-        @PathVariable(required = true, value = "id") id: Long,
-        @RequestParam(required = false, defaultValue = "0") offset: Int,
-        @RequestParam(required = false, defaultValue = "10") limit: Int
+        @AuthorizedUser user: User,
+        @PathVariable("id") id: Long
     ): List<CategoryDto> {
         val recipe = recipeService.getById(id)
+            .filter { user.canRead(it) }
             .orElseThrow { ResourceNotFound() }
 
         return categoryService.getAllByRecipe(recipe)
-            .asSequence()
-            .sortedBy { it.name }
-            .map { mapper.map<CategoryDto>(it) }
-            .toList()
+            .map(mapper::toDto)
     }
 }

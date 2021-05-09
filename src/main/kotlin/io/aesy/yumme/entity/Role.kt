@@ -10,18 +10,15 @@ class Role(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", unique = true, nullable = false)
     val name: String
 ) {
-    @ManyToMany(fetch = FetchType.LAZY)
-    val permissions: Set<Permission> = setOf()
-
     override fun toString(): String {
         return "Role(id=$id, name='$name')"
     }
 
     companion object {
-        const val USER = "USER"
-        const val ADMIN = "ADMIN"
+        const val USER: String = "USER"
+        const val ADMIN: String = "ADMIN"
     }
 }

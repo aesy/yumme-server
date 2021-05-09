@@ -11,11 +11,11 @@ class Tag(
     val id: Long? = null,
 
     @Column(name = "name", nullable = false)
-    val name: String,
+    var name: String,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe", nullable = false)
-    val recipe: Recipe
+    var recipe: Recipe
 ) {
     override fun toString(): String {
         return "Tag(id=$id, name='$name')"

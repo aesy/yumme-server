@@ -11,7 +11,7 @@ class Category(
     val id: Long? = null,
 
     @Column(name = "name", nullable = false)
-    val name: String
+    var name: String
 ) {
     @ManyToMany(
         fetch = FetchType.LAZY,

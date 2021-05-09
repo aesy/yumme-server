@@ -3,7 +3,7 @@ package io.aesy.yumme.dto
 import com.fasterxml.jackson.annotation.JsonProperty
 
 @Dto
-data class CategoryDto(
+class CategoryDto(
     @JsonProperty
-    val name: String
+    var name: String?
 )
