@@ -24,12 +24,12 @@ class RecipeDto(
     @JsonProperty
     var rating: RatingSummaryDto?,
 
-    @JsonProperty
+    @JsonProperty("prep_time")
     @JsonSerialize(converter = DurationLongJacksonConverter::class)
     @JsonDeserialize(converter = LongDurationJacksonConverter::class)
     var prepTime: Duration? = Duration.ofMinutes(10),
 
-    @JsonProperty
+    @JsonProperty("cook_time")
     @JsonSerialize(converter = DurationLongJacksonConverter::class)
     @JsonDeserialize(converter = LongDurationJacksonConverter::class)
     var cookTime: Duration? = Duration.ofMinutes(20),
