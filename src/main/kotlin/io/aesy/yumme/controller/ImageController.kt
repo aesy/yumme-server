@@ -7,7 +7,6 @@ import io.aesy.yumme.entity.User
 import io.aesy.yumme.exception.ResourceNotFound
 import io.aesy.yumme.service.ImageUploadService
 import io.aesy.yumme.service.RecipeService
-import io.aesy.yumme.util.AccessControl.canRead
 import io.aesy.yumme.util.AccessControl.canWrite
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.apache.commons.imaging.ImageReadException
@@ -39,18 +38,15 @@ class ImageController(
         private val CACHE_DURATION = Duration.ofHours(12)
     }
 
-    @RequiresAuthentication
     @GetMapping("/recipe/{id}/image/{name}.png")
     @Transactional
     fun viewImage(
-        @AuthorizedUser user: User,
         @PathVariable("id") id: Long,
         @PathVariable("name") name: String,
         @RequestParam("size", defaultValue = "large") size: String
     ): ResponseEntity<BufferedImage> {
         val type = size.toType()
         val recipe = recipeService.getById(id)
-            .filter { user.canRead(it) }
             .orElseThrow { ResourceNotFound() }
         val response = ResponseEntity.ok()
         val upload = imageUploadService.getUpload(recipe, name, type)
