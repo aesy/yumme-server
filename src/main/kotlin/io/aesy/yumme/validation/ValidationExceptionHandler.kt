@@ -22,14 +22,20 @@ class ValidationExceptionHandler {
         HttpStatus.BAD_REQUEST.value(),
         HttpStatus.BAD_REQUEST.reasonPhrase,
         "Validation failed. Error count: ${constraintViolations.size}",
-        constraintViolations.map { "${it.propertyPath} ${it.message}" }.toList()
+        constraintViolations.map { "${it.propertyPath} ${it.message}" }
     )
 
-    private fun MethodArgumentNotValidException.toDto(): ErrorDto = ErrorDto(
-        Date(),
-        HttpStatus.BAD_REQUEST.value(),
-        HttpStatus.BAD_REQUEST.reasonPhrase,
-        "Validation failed. Error count: ${this.bindingResult.errorCount}",
-        this.bindingResult.allErrors.map { "${it.objectName} ${it.defaultMessage}" }.toList()
-    )
+    private fun MethodArgumentNotValidException.toDto(): ErrorDto {
+        val fieldErrors = this.bindingResult.fieldErrors.map { "${it.field} ${it.defaultMessage}" }
+        val objectErrors = this.bindingResult.globalErrors.map { "${it.objectName} ${it.defaultMessage}" }
+        val allErrors = fieldErrors + objectErrors
+
+        return ErrorDto(
+            Date(),
+            HttpStatus.BAD_REQUEST.value(),
+            HttpStatus.BAD_REQUEST.reasonPhrase,
+            "Validation failed. Error count: ${allErrors.size}",
+            allErrors
+        )
+    }
 }
