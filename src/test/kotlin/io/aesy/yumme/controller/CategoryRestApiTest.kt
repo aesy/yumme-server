@@ -1,19 +1,21 @@
 package io.aesy.yumme.controller
 
-import io.aesy.yumme.util.Recipes
 import io.aesy.test.TestType
 import io.aesy.yumme.dto.CategoryDto
 import io.aesy.yumme.entity.Category
 import io.aesy.yumme.service.*
 import io.aesy.yumme.util.HTTP.getList
+import io.aesy.yumme.util.Recipes
+import io.aesy.yumme.util.Users.createAdmin
 import io.aesy.yumme.util.Users.createUser
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.boot.test.web.client.getForEntity
+import org.springframework.boot.test.web.client.*
 import org.springframework.http.HttpStatus
+import strikt.api.expectCatching
 import strikt.api.expectThat
 import strikt.assertions.*
+import strikt.java.isAbsent
 
 @TestType.RestApi
 class CategoryRestApiTest {
@@ -28,6 +30,34 @@ class CategoryRestApiTest {
 
     @Autowired
     private lateinit var userService: UserService
+
+    @Test
+    fun `It should be possible for an admin to create a category`() {
+        val user = userService.createAdmin("test", "woop", "secret")
+        val response = restTemplate.withBasicAuth(user.userName, "secret")
+            .postForEntity<CategoryDto>("/category?name=woop")
+
+        expectThat(response.statusCode).isEqualTo(HttpStatus.CREATED)
+
+        val category = response.body!!
+
+        expectThat(category.name).isEqualTo("woop")
+    }
+
+    @Test
+    fun `It should be possible for an admin to delete a category`() {
+        val user = userService.createAdmin("test", "woop", "secret")
+        categoryService.save(Category(name = "woop"))
+
+        expectCatching {
+            restTemplate.withBasicAuth(user.userName, "secret")
+                .delete("/category/woop")
+        }.isSuccess()
+
+        val category = categoryService.getByName("woop")
+
+        expectThat(category).isAbsent()
+    }
 
     @Test
     fun `It should be possible to fetch all categories`() {

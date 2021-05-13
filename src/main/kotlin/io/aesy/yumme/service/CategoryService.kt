@@ -3,7 +3,8 @@ package io.aesy.yumme.service
 import io.aesy.yumme.entity.Category
 import io.aesy.yumme.entity.Recipe
 import io.aesy.yumme.repository.CategoryRepository
-import org.springframework.data.domain.*
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.util.*
 import javax.transaction.Transactional
@@ -34,7 +35,12 @@ class CategoryService(
     }
 
     @Transactional
-    fun save(tag: Category): Category {
-        return categoryRepository.save(tag)
+    fun save(category: Category): Category {
+        return categoryRepository.save(category)
+    }
+
+    @Transactional
+    fun delete(category: Category) {
+        categoryRepository.delete(category)
     }
 }
