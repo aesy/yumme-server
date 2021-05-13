@@ -6,6 +6,10 @@ import io.aesy.yumme.dto.TokenRequest.PasswordGrantType
 import io.aesy.yumme.dto.TokenRequest.RefreshTokenGrantType
 import io.aesy.yumme.repository.RefreshTokenRepository
 import io.aesy.yumme.service.UserService
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.*
 import org.springframework.validation.annotation.Validated
@@ -30,6 +34,10 @@ class AuthController(
 ) {
     @PostMapping("/token")
     @Transactional
+    @ApiResponses(
+        ApiResponse(responseCode = "200", content = [Content(schema = Schema(implementation = TokenResponse::class))]),
+        ApiResponse(description = "Bad Request", responseCode = "400", content = [Content(schema = Schema(implementation = AuthErrorDto::class))])
+    )
     fun createAccessToken(
         @Valid @ModelAttribute request: TokenRequest?
     ): ResponseEntity<*> {
@@ -81,6 +89,10 @@ class AuthController(
 
     @PostMapping("/token/revoke")
     @Transactional
+    @ApiResponses(
+        ApiResponse(responseCode = "204", content = [Content(schema = Schema(implementation = Void::class))]),
+        ApiResponse(description = "Bad Request", responseCode = "400", content = [Content(schema = Schema(implementation = AuthErrorDto::class))])
+    )
     fun revokeRefreshToken(
         @Valid @ModelAttribute request: RevokeRefreshTokenRequest?
     ): ResponseEntity<*> {

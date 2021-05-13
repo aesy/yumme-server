@@ -21,12 +21,6 @@
     }, {
       "name": "yumme.security.jwt.expiration-minutes",
       "type": "java.lang.String"
-    }, {
-      "name": "springdoc.api-docs.enabled",
-      "type": "java.lang.Boolean"
-    }, {
-      "name": "springdoc.api-docs.path",
-      "type": "java.lang.String"
     }
   ]
 }

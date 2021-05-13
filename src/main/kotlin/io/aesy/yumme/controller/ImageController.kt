@@ -30,8 +30,7 @@ import javax.transaction.Transactional
 @Tag(name = "Recipe")
 @RestController
 @RequestMapping(
-    consumes = [MediaType.APPLICATION_JSON_VALUE, MediaType.ALL_VALUE],
-    produces = [MediaType.APPLICATION_JSON_VALUE]
+    consumes = [MediaType.APPLICATION_JSON_VALUE, MediaType.ALL_VALUE]
 )
 @RestControllerAdvice
 @Validated
@@ -43,7 +42,10 @@ class ImageController(
         private val CACHE_DURATION = Duration.ofHours(12)
     }
 
-    @GetMapping("/recipe/{id}/image/{name}.png")
+    @GetMapping(
+        "/recipe/{id}/image/{name}.png",
+        produces = [MediaType.IMAGE_PNG_VALUE]
+    )
     @Transactional
     fun viewImage(
         @PathVariable("id") id: Long,
@@ -55,7 +57,7 @@ class ImageController(
             .orElseThrow { ResourceNotFound() }
         val response = ResponseEntity.ok()
         val upload = imageUploadService.getUpload(recipe, name, type)
-            .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Image not found") }
+            .orElseThrow { ResourceNotFound() }
         val image = imageUploadService.readImage(upload)
 
         image.ifPresent {
@@ -76,7 +78,11 @@ class ImageController(
     }
 
     @RequiresAuthentication
-    @PostMapping("/recipe/{id}/image", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    @PostMapping(
+        "/recipe/{id}/image",
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
     @ResponseStatus(HttpStatus.OK)
     @Transactional
     fun uploadImage(

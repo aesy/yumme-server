@@ -46,10 +46,6 @@ spring:
       max-file-size: 4MB
       max-request-size: 4MB
 
-  main:
-    # Used in OpenApiConfiguration.kt
-    allow-bean-definition-overriding: true
-
 shiro:
   enabled: true
   web:
@@ -59,3 +55,5 @@ springdoc:
   api-docs:
     enabled: true
     path: /spec
+  swagger-ui:
+    enabled: false

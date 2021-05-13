@@ -5,9 +5,11 @@ import io.swagger.v3.oas.annotations.enums.SecuritySchemeType
 import io.swagger.v3.oas.annotations.info.Info
 import io.swagger.v3.oas.annotations.security.SecurityScheme
 import io.swagger.v3.oas.annotations.security.SecuritySchemes
-import org.springdoc.core.SecurityParser
-import org.springframework.context.annotation.Bean
+import org.springdoc.core.SpringDocUtils
 import org.springframework.context.annotation.Configuration
+import java.awt.image.BufferedImage
+import java.time.Duration
+import java.time.Instant
 
 @OpenAPIDefinition(info = Info(title = "Yumme API"))
 @SecuritySchemes(
@@ -16,9 +18,11 @@ import org.springframework.context.annotation.Configuration
 )
 @Configuration
 class OpenApiConfiguration {
-    // Override existing security parser to support shiro annotations such as `@RequiresAuthentication`
-    @Bean
-    fun securityParser(): SecurityParser {
-        return ShiroSecurityParser()
+    init {
+        SpringDocUtils
+            .getConfig()
+            .replaceWithClass(BufferedImage::class.java, ByteArray::class.java)
+            .replaceWithClass(Duration::class.java, Long::class.java)
+            .replaceWithClass(Instant::class.java, Long::class.java)
     }
 }
