@@ -1,6 +1,7 @@
 package io.aesy.yumme.mapper
 
-import io.aesy.yumme.dto.*
+import io.aesy.yumme.dto.CreateRecipeRequest
+import io.aesy.yumme.dto.RecipeDto
 import io.aesy.yumme.entity.*
 import io.aesy.yumme.entity.RecipeHasImageUpload.Type
 import io.aesy.yumme.service.RatingService
@@ -45,7 +46,7 @@ class RecipeMapper(
             .toMutableSet()
     )
 
-    private fun serializeDirections(directions: List<String>): String = directions
+    fun serializeDirections(directions: List<String>): String = directions
         .joinToString(
             "</section><section>",
             "<section>",
@@ -53,7 +54,7 @@ class RecipeMapper(
             transform = HtmlUtils::htmlEscape
         )
 
-    private fun deserializeDirections(directions: String): MutableList<String> = directions
+    fun deserializeDirections(directions: String): MutableList<String> = directions
         .removePrefix("<section>")
         .removeSuffix("</section>")
         .split("</section><section>")

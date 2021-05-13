@@ -48,6 +48,17 @@ class Recipe(
     @Generated(GenerationTime.INSERT)
     var createdAt: Instant = Instant.now()
 
+    @ManyToMany(
+        fetch = FetchType.EAGER,
+        cascade = [CascadeType.ALL]
+    )
+    @JoinTable(
+        name = "recipe_has_ingredient",
+        joinColumns = [JoinColumn(name = "recipe")],
+        inverseJoinColumns = [JoinColumn(name = "ingredient")]
+    )
+    var ingredients: MutableSet<Ingredient> = mutableSetOf()
+
     @OneToMany(
         mappedBy = "recipe",
         fetch = FetchType.EAGER,

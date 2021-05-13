@@ -139,7 +139,7 @@ class RecipeRestApiTest {
     @Test
     fun `It should be possible to create a new recipe`() {
         val author = userService.createUser("test@test.com", "woop", "secret")
-        categoryService.save(Category(name = "wawawa"))
+        categoryService.save(Category(name = "abc"))
         val request = CreateRecipeRequest(
             "woop",
             "woop",
@@ -149,8 +149,8 @@ class RecipeRestApiTest {
             Duration.ofHours(2),
             3
         ).apply {
-            tags = mutableSetOf("abc")
-            categories = mutableSetOf("def")
+            categories = mutableSetOf("abc")
+            tags = mutableSetOf("def")
         }
 
         val response = restTemplate.withBasicAuth(author.userName, "secret")
@@ -167,6 +167,7 @@ class RecipeRestApiTest {
     @Test
     fun `It should be possible to replace an old recipe`() {
         val author = userService.createUser("test@test.com", "woop", "secret")
+        categoryService.save(Category(name = "abc"))
         val recipe = recipeService.save(Recipes.random(author))
         val request = CreateRecipeRequest(
             "wawawa",
@@ -177,8 +178,8 @@ class RecipeRestApiTest {
             Duration.ofHours(2),
             3
         ).apply {
-            tags = mutableSetOf("abc")
-            categories = mutableSetOf("def")
+            categories = mutableSetOf("abc")
+            tags = mutableSetOf("def")
         }
 
         restTemplate.withBasicAuth(author.userName, "secret")
@@ -201,8 +202,8 @@ class RecipeRestApiTest {
         val request = UpdateRecipeRequest(
             "wawawa",
         ).apply {
-            tags = mutableSetOf("abc")
-            categories = mutableSetOf("def")
+            categories = mutableSetOf("abc")
+            tags = mutableSetOf("def")
         }
 
         restTemplate.withBasicAuth(author.userName, "secret")

@@ -64,20 +64,6 @@ FOR EACH ROW
     END $$
 DELIMITER ;
 
-CREATE TABLE `unit` (
-    `id` int unsigned NOT NULL AUTO_INCREMENT,
-    `name` varchar(64) NOT NULL UNIQUE,
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-INSERT INTO `unit` (`name`)
-    VALUES ('FLUID OUNCE'), ('PINT'), ('QUART'), ('GALLON'),
-           ('POUND'), ('OUNCE'), ('INCH'), ('FOOT'),
-           ('GILL'), ('TEASPOON'), ('TABLESPOON'), ('CUP'),
-           ('MILLILITRE'), ('CENTILITRE'), ('DECILITRE'), ('LITRE'),
-           ('MILLIGRAM'), ('GRAM'), ('HECTOGRAM'), ('KILOGRAM'),
-           ('MILLIMETER'), ('CENTIMETER'), ('DECIMETER'), ('METER');
-
 CREATE TABLE `ingredient` (
     `id` int unsigned NOT NULL AUTO_INCREMENT,
     `name` varchar(64) NOT NULL UNIQUE,
@@ -87,16 +73,11 @@ CREATE TABLE `ingredient` (
 CREATE TABLE `recipe_has_ingredient` (
     `recipe` int unsigned NOT NULL,
     `ingredient` int unsigned NOT NULL,
-    `amount` int unsigned NOT NULL,
-    `unit` int unsigned NOT NULL,
     PRIMARY KEY (`recipe`, `ingredient`),
     FOREIGN KEY (`recipe`) REFERENCES `recipe` (`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
     FOREIGN KEY (`ingredient`) REFERENCES `ingredient` (`id`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
-    FOREIGN KEY (`unit`) REFERENCES `unit` (`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
