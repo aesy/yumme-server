@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service
 @Service
 class UserMapper {
     fun toDto(user: User): UserDto = UserDto(
-        name = user.userName
+        id = user.id,
+        userName = user.userName,
+        displayName = user.displayName
     )
 }

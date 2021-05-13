@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service
 import java.util.*
 import javax.annotation.PostConstruct
 import javax.transaction.Transactional
-import kotlin.NoSuchElementException
 
 @Service
 class UserService(

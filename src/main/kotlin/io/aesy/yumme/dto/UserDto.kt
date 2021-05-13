@@ -4,6 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 @Dto
 class UserDto(
-    @JsonProperty
-    var name: String?
+    @JsonProperty("id")
+    var id: Long?,
+
+    @JsonProperty("user_name")
+    var userName: String?,
+
+    @JsonProperty("display_name")
+    var displayName: String?,
 )
