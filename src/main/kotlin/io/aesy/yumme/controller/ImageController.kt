@@ -1,6 +1,7 @@
 package io.aesy.yumme.controller
 
 import io.aesy.yumme.auth.AuthorizedUser
+import io.aesy.yumme.dto.ErrorDto
 import io.aesy.yumme.dto.ImageUploadDto
 import io.aesy.yumme.entity.RecipeHasImageUpload.Type
 import io.aesy.yumme.entity.User
@@ -11,16 +12,19 @@ import io.aesy.yumme.util.AccessControl.canWrite
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.apache.commons.imaging.ImageReadException
 import org.apache.commons.imaging.Imaging
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.shiro.authz.annotation.RequiresAuthentication
 import org.springframework.http.*
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartException
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.server.ResponseStatusException
 import java.awt.image.BufferedImage
 import java.io.IOException
 import java.time.*
 import java.time.format.DateTimeFormatter
+import java.util.*
 import javax.transaction.Transactional
 
 @Tag(name = "Recipe")
@@ -29,6 +33,7 @@ import javax.transaction.Transactional
     consumes = [MediaType.APPLICATION_JSON_VALUE, MediaType.ALL_VALUE],
     produces = [MediaType.APPLICATION_JSON_VALUE]
 )
+@RestControllerAdvice
 @Validated
 class ImageController(
     private val recipeService: RecipeService,
@@ -125,9 +130,18 @@ class ImageController(
         val deleted = imageUploadService.deleteUpload(recipe, name)
 
         if (!deleted) {
-            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Image not found")
+            throw ResourceNotFound()
         }
     }
+
+    @ExceptionHandler(MultipartException::class)
+    fun onFileError(exception: MultipartException): ErrorDto = ErrorDto(
+        Date(),
+        HttpStatus.BAD_REQUEST.value(),
+        HttpStatus.BAD_REQUEST.reasonPhrase,
+        ExceptionUtils.getRootCause(exception).message ?: "Failed to upload image",
+        listOf(ExceptionUtils.getRootCause(exception).message ?: "Failed to upload image")
+    )
 
     private fun String.toType() = when (this) {
         "thumbnail" -> Type.THUMBNAIL
