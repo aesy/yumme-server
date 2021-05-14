@@ -47,8 +47,5 @@ class RecipeDto(
     var images: MutableSet<String> = mutableSetOf(),
 
     @JsonProperty
-    var ingredients: MutableSet<IngredientDto> = mutableSetOf(
-        // TODO temporary junk data
-        IngredientDto(), IngredientDto(), IngredientDto(), IngredientDto(), IngredientDto()
-    )
+    var ingredients: MutableSet<IngredientDto> = mutableSetOf()
 )

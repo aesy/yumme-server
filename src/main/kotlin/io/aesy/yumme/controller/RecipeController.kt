@@ -159,7 +159,8 @@ class RecipeController(
         }
 
         for (name in request.ingredients) {
-            val ingredient = ingredientService.save(Ingredient(name = name))
+            val ingredient = ingredientService.getByName(name)
+                .orElseGet { Ingredient(name = name) }
             recipe.ingredients.add(ingredient)
         }
 

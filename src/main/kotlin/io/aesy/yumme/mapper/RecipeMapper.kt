@@ -1,7 +1,6 @@
 package io.aesy.yumme.mapper
 
-import io.aesy.yumme.dto.CreateRecipeRequest
-import io.aesy.yumme.dto.RecipeDto
+import io.aesy.yumme.dto.*
 import io.aesy.yumme.entity.*
 import io.aesy.yumme.entity.RecipeHasImageUpload.Type
 import io.aesy.yumme.service.RatingService
@@ -38,6 +37,9 @@ class RecipeMapper(
             .toMutableSet(),
         categories = recipe.categories
             .map(Category::name)
+            .toMutableSet(),
+        ingredients = recipe.ingredients
+            .map { IngredientDto(it.name) }
             .toMutableSet(),
         images = recipe.imageUploadMappings
             .filter { it.type == Type.ORIGINAL }
