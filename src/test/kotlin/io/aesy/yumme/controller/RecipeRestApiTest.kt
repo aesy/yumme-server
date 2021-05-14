@@ -9,6 +9,8 @@ import io.aesy.yumme.util.Recipes
 import io.aesy.yumme.util.Users.createUser
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.*
 import org.springframework.http.HttpStatus
@@ -162,6 +164,53 @@ class RecipeRestApiTest {
 
         expectThat(recipe).isNotNull()
         expectThat(recipe!!.id).isNotNull()
+    }
+
+    @Test
+    fun `It should not be possible to create a new recipe with a 'negative' duration`() {
+        val author = userService.createUser("test@test.com", "woop", "secret")
+        categoryService.save(Category(name = "abc"))
+        val request = CreateRecipeRequest(
+            "woop",
+            "woop",
+            mutableListOf("woop"),
+            true,
+            Duration.ofHours(-1),
+            Duration.ofHours(-2),
+            3
+        ).apply {
+            categories = mutableSetOf("abc")
+            tags = mutableSetOf("def")
+        }
+
+        val response = restTemplate.withBasicAuth(author.userName, "secret")
+            .postForEntity<Unit>("/recipe", request)
+
+        expectThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = [-1, 0])
+    fun `It should not be possible to create a new recipe with a yield of zero or less`(yield: Int) {
+        val author = userService.createUser("test@test.com", "woop", "secret")
+        categoryService.save(Category(name = "abc"))
+        val request = CreateRecipeRequest(
+            "woop",
+            "woop",
+            mutableListOf("woop"),
+            true,
+            Duration.ofHours(1),
+            Duration.ofHours(2),
+            `yield`
+        ).apply {
+            categories = mutableSetOf("abc")
+            tags = mutableSetOf("def")
+        }
+
+        val response = restTemplate.withBasicAuth(author.userName, "secret")
+            .postForEntity<Unit>("/recipe", request)
+
+        expectThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
     }
 
     @Test

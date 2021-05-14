@@ -41,7 +41,7 @@ class UserRestApiTest {
     @Test
     fun `It should be possible to register a new user`() {
         val request = RegisterRequest("test", "woop", "secret123")
-        val response = restTemplate.postForEntity<String>("/user/register", request)
+         val response = restTemplate.postForEntity<Unit>("/user/register", request)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.CREATED)
     }

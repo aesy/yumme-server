@@ -5,8 +5,11 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import io.aesy.yumme.converter.DurationLongJacksonConverter
 import io.aesy.yumme.converter.LongDurationJacksonConverter
+import io.aesy.yumme.validation.MaxDuration
+import io.aesy.yumme.validation.MinDuration
 import org.hibernate.validator.constraints.Length
 import java.time.Duration
+import java.time.temporal.ChronoUnit
 import javax.validation.constraints.*
 
 @Dto
@@ -26,29 +29,31 @@ class CreateRecipeRequest(
     @field:JsonProperty("public")
     var public: Boolean?,
     @field:NotNull
+    @field:MaxDuration(1, ChronoUnit.DAYS)
+    @field:MinDuration(0, ChronoUnit.SECONDS)
     @field:JsonProperty("prep_time")
     @field:JsonSerialize(converter = DurationLongJacksonConverter::class)
     @field:JsonDeserialize(converter = LongDurationJacksonConverter::class)
     var prepTime: Duration?,
     @field:NotNull
+    @field:MaxDuration(1, ChronoUnit.DAYS)
+    @field:MinDuration(0, ChronoUnit.SECONDS)
     @field:JsonProperty("cook_time")
     @field:JsonSerialize(converter = DurationLongJacksonConverter::class)
     @field:JsonDeserialize(converter = LongDurationJacksonConverter::class)
     var cookTime: Duration?,
     @field:NotNull
+    @field:Max(100)
     @field:Min(1)
     @field:JsonProperty("yield")
     var yield: Int?,
 ) {
-    @field:NotNull
     @field:JsonProperty("tags")
     var tags: MutableSet<String> = mutableSetOf()
 
-    @field:NotNull
     @field:JsonProperty("categories")
     var categories: MutableSet<String> = mutableSetOf()
 
-    @field:NotNull
     @field:JsonProperty("ingredients")
     var ingredients: MutableSet<String> = mutableSetOf()
 }
