@@ -15,6 +15,8 @@
 
 Backend for Yumme - a self-hosted recipe journal.
 
+Web frontend counterpart can be found [here](https://github.com/aesy/yumme-web).
+
 ### [API Reference](https://aesy.github.io/yumme-server/apidocs/)
 
 ## Development
