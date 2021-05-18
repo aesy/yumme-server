@@ -58,6 +58,29 @@ class RecipeHasImageUploadRepositoryPersistenceTest {
     }
 
     @Test
+    fun `It should be possible to fetch an image uploads by recipe and type`() {
+        val author = userRepository.save(Users.random())
+        val recipe = recipeRepository.save(Recipes.random(author))
+        val upload1 = imageUploadRepository.save(createUpload())
+        val mapping1 = recipeHasImageUploadRepository.save(createOriginalMapping(upload1, recipe))
+        val upload2 = imageUploadRepository.save(createUpload())
+        recipeHasImageUploadRepository.save(
+            RecipeHasImageUpload(
+                name = mapping1.name,
+                type = Type.THUMBNAIL,
+                recipe = recipe,
+                upload = upload2
+            )
+        )
+
+        val uploads = recipeHasImageUploadRepository.findByRecipeAndType(recipe, Type.ORIGINAL)
+
+        expectThat(uploads)
+            .map(RecipeHasImageUpload::id)
+            .containsExactly(mapping1.id)
+    }
+
+    @Test
     fun `It should be possible to fetch an image upload by recipe, name and type`() {
         val author = userRepository.save(Users.random())
         val recipe = recipeRepository.save(Recipes.random(author))

@@ -3,13 +3,15 @@ package io.aesy.yumme.mapper
 import io.aesy.yumme.dto.*
 import io.aesy.yumme.entity.*
 import io.aesy.yumme.entity.RecipeHasImageUpload.Type
+import io.aesy.yumme.repository.RecipeHasImageUploadRepository
 import io.aesy.yumme.service.RatingService
 import org.springframework.stereotype.Service
 import org.springframework.web.util.HtmlUtils
 
 @Service
 class RecipeMapper(
-    private val ratingService: RatingService
+    private val ratingService: RatingService,
+    private val recipeHasImageUploadRepository: RecipeHasImageUploadRepository
 ) {
     fun toEntity(request: CreateRecipeRequest, author: User): Recipe = Recipe(
         title = request.title!!,
@@ -41,8 +43,7 @@ class RecipeMapper(
         ingredients = recipe.ingredients
             .map { IngredientDto(it.name) }
             .toMutableSet(),
-        images = recipe.imageUploadMappings
-            .filter { it.type == Type.ORIGINAL }
+        images = recipeHasImageUploadRepository.findByRecipeAndType(recipe, Type.ORIGINAL)
             .map(RecipeHasImageUpload::name)
             .map { "$it.png" }
             .toMutableSet()

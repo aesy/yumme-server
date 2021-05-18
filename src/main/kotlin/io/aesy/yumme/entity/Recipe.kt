@@ -78,14 +78,6 @@ class Recipe(
     )
     var categories: MutableSet<Category> = mutableSetOf()
 
-    @OneToMany(
-        mappedBy = "recipe",
-        fetch = FetchType.LAZY,
-        cascade = [CascadeType.ALL],
-        orphanRemoval = true
-    )
-    var imageUploadMappings: MutableSet<RecipeHasImageUpload> = mutableSetOf()
-
     override fun toString(): String {
         return "Recipe(id=$id, title='$title')"
     }

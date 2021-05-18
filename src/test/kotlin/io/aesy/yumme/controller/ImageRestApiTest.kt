@@ -93,8 +93,8 @@ class ImageRestApiTest {
         val entity = HttpEntity(parameters, headers)
 
         val name = restTemplate.withBasicAuth(author.userName, "secret")
-            .postForEntity<ImageUploadDto>("/recipe/${recipe.id}/image", entity)
-            .body!!.name
+            .postForObject<ImageUploadDto>("/recipe/${recipe.id}/image", entity)!!
+            .name
 
         await()
             .pollInterval(3, TimeUnit.SECONDS)
@@ -132,8 +132,8 @@ class ImageRestApiTest {
         val entity = HttpEntity(parameters, headers)
 
         val name = restTemplate.withBasicAuth(author.userName, "secret")
-            .postForEntity<ImageUploadDto>("/recipe/${recipe.id}/image", entity)
-            .body!!.name
+            .postForObject<ImageUploadDto>("/recipe/${recipe.id}/image", entity)!!
+            .name
 
         expectCatching {
             restTemplate.withBasicAuth(author.userName, "secret")

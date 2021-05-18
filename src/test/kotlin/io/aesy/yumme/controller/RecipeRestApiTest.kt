@@ -2,10 +2,13 @@ package io.aesy.yumme.controller
 
 import io.aesy.test.TestType
 import io.aesy.yumme.dto.*
-import io.aesy.yumme.entity.Category
+import io.aesy.yumme.entity.*
+import io.aesy.yumme.repository.ImageUploadRepository
+import io.aesy.yumme.repository.RecipeHasImageUploadRepository
 import io.aesy.yumme.service.*
 import io.aesy.yumme.util.HTTP.getList
 import io.aesy.yumme.util.Recipes
+import io.aesy.yumme.util.Strings
 import io.aesy.yumme.util.Users.createUser
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -35,6 +38,15 @@ class RecipeRestApiTest {
 
     @Autowired
     private lateinit var categoryService: CategoryService
+
+    @Autowired
+    private lateinit var ratingService: RatingService
+
+    @Autowired
+    private lateinit var imageUploadRepository: ImageUploadRepository
+
+    @Autowired
+    private lateinit var recipeHasUploadRepository: RecipeHasImageUploadRepository
 
     @BeforeEach
     fun setup() {
@@ -245,6 +257,57 @@ class RecipeRestApiTest {
     }
 
     @Test
+    fun `It should be possible to replace an old recipe without ratings disappearing`() {
+        val author = userService.createUser("test@test.com", "woop", "secret")
+        val recipe = recipeService.save(Recipes.random(author))
+        ratingService.rateAsUser(author, recipe, 5)
+
+        val request = CreateRecipeRequest(
+            "wawawa",
+            "wawawa",
+            mutableListOf("woop"),
+            true,
+            Duration.ofHours(1),
+            Duration.ofHours(2),
+            3
+        )
+
+        restTemplate.withBasicAuth(author.userName, "secret")
+            .put("/recipe/${recipe.id}", request)
+
+        val result = restTemplate.withBasicAuth(author.userName, "secret")
+            .getForObject<RecipeDto>("/recipe/${recipe.id}")!!
+
+        expectThat(result.rating?.count).isNotNull().isNotEqualTo(0)
+    }
+
+    @Test
+    fun `It should be possible to replace an old recipe without images disappearing`() {
+        val author = userService.createUser("test@test.com", "woop", "secret")
+        val recipe = recipeService.save(Recipes.random(author))
+        val upload = imageUploadRepository.save(createUpload())
+        recipeHasUploadRepository.save(createOriginalMapping(upload, recipe))
+
+        val request = CreateRecipeRequest(
+            "wawawa",
+            "wawawa",
+            mutableListOf("woop"),
+            true,
+            Duration.ofHours(1),
+            Duration.ofHours(2),
+            3
+        )
+
+        restTemplate.withBasicAuth(author.userName, "secret")
+            .put("/recipe/${recipe.id}", request)
+
+        val result = restTemplate.withBasicAuth(author.userName, "secret")
+            .getForObject<RecipeDto>("/recipe/${recipe.id}")!!
+
+        expectThat(result.images).isNotEmpty()
+    }
+
+    @Test
     fun `It should be possible to update an old recipe`() {
         val author = userService.createUser("test", "woop", "secret")
         val recipe = recipeService.save(Recipes.random(author))
@@ -274,7 +337,6 @@ class RecipeRestApiTest {
             .getForEntity<RecipeDto>("/recipe/${recipe.id}")
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-
         expectThat(response.body).isNotNull()
         expectThat(response.body!!.id).isEqualTo(recipe.id)
     }
@@ -309,5 +371,23 @@ class RecipeRestApiTest {
             restTemplate.withBasicAuth(author.userName, "secret")
                 .delete("/recipe/42")
         }.isSuccess()
+    }
+
+    private fun createUpload(): ImageUpload {
+        return ImageUpload(
+            fileName = Strings.random(30),
+            hash = Strings.random(32),
+            width = 0,
+            height = 0
+        )
+    }
+
+    private fun createOriginalMapping(upload: ImageUpload, recipe: Recipe): RecipeHasImageUpload {
+        return RecipeHasImageUpload(
+            name = Strings.random(30),
+            type = RecipeHasImageUpload.Type.ORIGINAL,
+            recipe = recipe,
+            upload = upload
+        )
     }
 }
