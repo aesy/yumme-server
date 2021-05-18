@@ -5,6 +5,7 @@ import io.aesy.yumme.dto.RegisterRequest
 import io.aesy.yumme.dto.UserDto
 import io.aesy.yumme.entity.Role
 import io.aesy.yumme.entity.User
+import io.aesy.yumme.exception.ResourceNotFound
 import io.aesy.yumme.mapper.UserMapper
 import io.aesy.yumme.service.UserService
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -36,6 +37,19 @@ class UserController(
     fun inspectSelf(
         @AuthorizedUser user: User
     ): UserDto {
+        return mapper.toDto(user)
+    }
+
+    @RequiresAuthentication
+    @GetMapping("{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @Transactional
+    fun inspectUserById(
+        @PathVariable("id") id: Long,
+    ): UserDto {
+        val user = users.getById(id)
+            .orElseThrow { ResourceNotFound() }
+
         return mapper.toDto(user)
     }
 

@@ -32,6 +32,17 @@ class UserRestApiTest {
     }
 
     @Test
+    fun `It should be possible to fetch a user by id`() {
+        val user1 = userService.createUser("test1", "woop1", "secret123")
+        val user2 = userService.createUser("test2", "woop2", "secret321")
+        val response = restTemplate.withBasicAuth(user1.userName, "secret123")
+            .getForEntity<UserDto>("/user/${user2.id}")
+
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
+        expectThat(response.body).isNotNull()
+    }
+
+    @Test
     fun `It should not be possible to fetch an unauthenticated user`() {
         val response = restTemplate.getForEntity<Unit>("/user/me")
 
