@@ -29,6 +29,14 @@ class RecipeService(
         return recipeRepository.findAllPublic(page)
     }
 
+    @Transactional
+    fun getRecentByUser(user: User, count: Int): List<Recipe> {
+        val sort = Sort.by(Direction.DESC, Recipe::createdAt.name, Recipe::id.name)
+        val page = PageRequest.of(0, count, sort)
+
+        return recipeRepository.findAllPublicByAuthor(user, page)
+    }
+
     @Cacheable("popular-recipes")
     @Transactional
     fun getPopular(count: Int): List<Recipe> {
@@ -36,6 +44,14 @@ class RecipeService(
         val page = PageRequest.of(0, count, sort)
 
         return recipeRepository.findAllPublic(page)
+    }
+
+    @Transactional
+    fun getPopularByUser(user: User, count: Int): List<Recipe> {
+        val sort = Sort.by(Direction.DESC, Recipe::createdAt.name, Recipe::id.name) // TODO use popularity
+        val page = PageRequest.of(0, count, sort)
+
+        return recipeRepository.findAllPublicByAuthor(user, page)
     }
 
     @Transactional

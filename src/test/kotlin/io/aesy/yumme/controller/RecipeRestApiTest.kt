@@ -102,24 +102,6 @@ class RecipeRestApiTest {
     }
 
     @Test
-    fun `It should be possible to fetch the most popular public recipes`() {
-        val author1 = userService.createUser("test1@test.com", "woop", "secret")
-        val author2 = userService.createUser("test2@test.com", "woop", "secret")
-        val recipe1 = Recipes.random(author1)
-        recipe1.public = true
-        recipeService.save(recipe1)
-        val recipe2 = Recipes.random(author1)
-        recipe2.public = false
-        recipeService.save(recipe2)
-
-        val response = restTemplate.withBasicAuth(author2.userName, "secret")
-            .getList<RecipeDto>("/recipe/popular")
-
-        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isNotNull().hasSize(1)
-    }
-
-    @Test
     fun `It should be possible to fetch the most recently created public recipes`() {
         val author1 = userService.createUser("test1@test.com", "woop", "secret")
         val author2 = userService.createUser("test2@test.com", "woop", "secret")
@@ -141,7 +123,35 @@ class RecipeRestApiTest {
 
         expectThat(response.body)
             .isNotNull()
-            .hasSize(2)
+            .map(RecipeDto::id)
+            .containsExactly(recipe3.id, recipe2.id)
+    }
+
+    @Test
+    fun `It should be possible to fetch the most recently created public recipes by user`() {
+        val author1 = userService.createUser("test1@test.com", "woop", "secret")
+        val author2 = userService.createUser("test2@test.com", "woop", "secret")
+        val recipe1 = Recipes.random(author1)
+        recipe1.public = false
+        recipeService.save(recipe1)
+        val recipe2 = Recipes.random(author1)
+        recipe2.public = true
+        recipeService.save(recipe2)
+        val recipe3 = Recipes.random(author1)
+        recipe3.public = true
+        recipeService.save(recipe3)
+        val recipe4 = Recipes.random(author2)
+        recipe4.public = true
+        recipeService.save(recipe4)
+
+        val response = restTemplate.withBasicAuth(author2.userName, "secret")
+            .getList<RecipeDto>("/recipe/recent?user=${author1.id}")
+
+        expectThat(response.statusCode)
+            .isEqualTo(HttpStatus.OK)
+
+        expectThat(response.body)
+            .isNotNull()
             .map(RecipeDto::id)
             .containsExactly(recipe3.id, recipe2.id)
     }

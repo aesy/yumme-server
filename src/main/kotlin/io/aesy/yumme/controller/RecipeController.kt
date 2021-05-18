@@ -36,34 +36,55 @@ class RecipeController(
 ) {
     @RequiresAuthentication
     @GetMapping("/recent")
+    @ResponseStatus(HttpStatus.OK)
     @Transactional
     fun listRecentRecipes(
         @AuthorizedUser user: User,
-        @RequestParam(required = false, defaultValue = "10") limit: Int
+        @RequestParam(required = false, defaultValue = "10") limit: Int,
+        @RequestParam("user", required = false) userId: Long?
     ): List<RecipeDto> {
         val maxLimit = 100
+        val author = if (userId == null) {
+            user
+        } else {
+            userService.getById(userId)
+                .orElseThrow { ResourceNotFound() }
+        }
 
-        return recipeService.getRecent(min(limit, maxLimit))
-            .filter { user.canRead(it) }
-            .map(mapper::toDto)
+        return if (userId == null) {
+            recipeService.getRecent(min(limit, maxLimit))
+        } else {
+            recipeService.getRecentByUser(author, min(limit, maxLimit))
+        }.map(mapper::toDto)
     }
 
     @RequiresAuthentication
     @GetMapping("/popular")
+    @ResponseStatus(HttpStatus.OK)
     @Transactional
     fun listPopularRecipes(
         @AuthorizedUser user: User,
-        @RequestParam(required = false, defaultValue = "10") limit: Int
+        @RequestParam(required = false, defaultValue = "10") limit: Int,
+        @RequestParam("user", required = false) userId: Long?
     ): List<RecipeDto> {
         val maxLimit = 100
+        val author = if (userId == null) {
+            user
+        } else {
+            userService.getById(userId)
+                .orElseThrow { ResourceNotFound() }
+        }
 
-        return recipeService.getPopular(min(limit, maxLimit))
-            .filter { user.canRead(it) }
-            .map(mapper::toDto)
+        return if (userId == null) {
+            recipeService.getPopular(min(limit, maxLimit))
+        } else {
+            recipeService.getPopularByUser(author, min(limit, maxLimit))
+        }.map(mapper::toDto)
     }
 
     @RequiresAuthentication
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     @Transactional
     fun listRecipesByUser(
         @AuthorizedUser user: User,
@@ -83,12 +104,12 @@ class RecipeController(
             recipeService.getByAuthor(author, min(limit, maxLimit), offset)
         } else {
             recipeService.getPublicByAuthor(author, min(limit, maxLimit), offset)
-                .filter { user.canRead(it) }
         }.map(mapper::toDto)
     }
 
     @RequiresAuthentication
     @GetMapping("{id}")
+    @ResponseStatus(HttpStatus.OK)
     @Transactional
     fun inspectRecipeById(
         @AuthorizedUser user: User,
