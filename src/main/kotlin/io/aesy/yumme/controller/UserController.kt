@@ -10,7 +10,6 @@ import io.aesy.yumme.mapper.UserMapper
 import io.aesy.yumme.service.UserService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.apache.shiro.authz.annotation.RequiresAuthentication
-import org.apache.shiro.authz.annotation.RequiresGuest
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.validation.annotation.Validated
@@ -53,7 +52,6 @@ class UserController(
         return mapper.toDto(user)
     }
 
-    @RequiresGuest
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
