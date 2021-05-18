@@ -23,7 +23,6 @@ import strikt.api.expectThat
 import strikt.assertions.*
 import strikt.java.isAbsent
 import java.time.Duration
-import java.time.Instant
 
 @TestType.RestApi
 class RecipeRestApiTest {
@@ -126,15 +125,12 @@ class RecipeRestApiTest {
         val author2 = userService.createUser("test2@test.com", "woop", "secret")
         val recipe1 = Recipes.random(author1)
         recipe1.public = false
-        recipe1.createdAt = Instant.now()
         recipeService.save(recipe1)
         val recipe2 = Recipes.random(author1)
         recipe2.public = true
-        recipe2.createdAt = Instant.now().minusSeconds(5)
         recipeService.save(recipe2)
         val recipe3 = Recipes.random(author2)
         recipe3.public = true
-        recipe3.createdAt = Instant.now()
         recipeService.save(recipe3)
 
         val response = restTemplate.withBasicAuth(author2.userName, "secret")
@@ -147,7 +143,7 @@ class RecipeRestApiTest {
             .isNotNull()
             .hasSize(2)
             .map(RecipeDto::id)
-            .containsExactly(recipe2.id, recipe3.id)
+            .containsExactly(recipe3.id, recipe2.id)
     }
 
     @Test

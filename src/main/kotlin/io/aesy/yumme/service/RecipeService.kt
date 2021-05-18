@@ -23,7 +23,7 @@ class RecipeService(
     @Cacheable("recent-recipes")
     @Transactional
     fun getRecent(count: Int): List<Recipe> {
-        val sort = Sort.by(Direction.ASC, Recipe::createdAt.name)
+        val sort = Sort.by(Direction.DESC, Recipe::createdAt.name, Recipe::id.name)
         val page = PageRequest.of(0, count, sort)
 
         return recipeRepository.findAllPublic(page)
@@ -32,7 +32,7 @@ class RecipeService(
     @Cacheable("popular-recipes")
     @Transactional
     fun getPopular(count: Int): List<Recipe> {
-        val sort = Sort.by(Direction.DESC, Recipe::createdAt.name) // TODO use popularity
+        val sort = Sort.by(Direction.DESC, Recipe::createdAt.name, Recipe::id.name) // TODO use popularity
         val page = PageRequest.of(0, count, sort)
 
         return recipeRepository.findAllPublic(page)
