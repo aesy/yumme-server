@@ -159,35 +159,35 @@ class RecipeController(
         @PathVariable("id") id: Long,
         @Valid @RequestBody request: CreateRecipeRequest
     ): RecipeDto {
-        recipeService.getById(id)
+        val oldRecipe = recipeService.getById(id)
             .filter { user.canWrite(it) }
             .orElseThrow { ResourceNotFound() }
 
-        val recipe = mapper.toEntity(request, user)
-        recipe.id = id
-        recipe.categories.clear()
-        recipe.tags.clear()
+        val newRecipe = mapper.toEntity(request, oldRecipe.author)
+        newRecipe.id = id
+        newRecipe.categories.clear()
+        newRecipe.tags.clear()
 
         for (name in request.categories) {
             val category = categoryService.getByName(name)
                 .orElseThrow { ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown category $name") }
-            recipe.categories.add(category)
+            newRecipe.categories.add(category)
         }
 
         for (name in request.tags) {
-            val tag = tagService.save(Tag(name = name, recipe = recipe))
-            recipe.tags.add(tag)
+            val tag = tagService.save(Tag(name = name, recipe = newRecipe))
+            newRecipe.tags.add(tag)
         }
 
         for (name in request.ingredients) {
             val ingredient = ingredientService.getByName(name)
                 .orElseGet { Ingredient(name = name) }
-            recipe.ingredients.add(ingredient)
+            newRecipe.ingredients.add(ingredient)
         }
 
-        recipeService.save(recipe)
+        recipeService.save(newRecipe)
 
-        return mapper.toDto(recipe)
+        return mapper.toDto(newRecipe)
     }
 
     @RequiresAuthentication
