@@ -17,6 +17,7 @@ import strikt.api.expectThat
 import strikt.java.isPresent
 import java.nio.file.Files
 import java.util.*
+import javax.imageio.ImageIO
 
 @TestType.Unit
 @SpringBootTest(
@@ -51,11 +52,12 @@ class ImageUploadServiceUnitTest {
         val author = Users.random()
         val recipe = Recipes.random(author)
         val stream = Resources.open("/testData/small_image.png")
+        val image = ImageIO.read(stream)
 
         every { imageUploadRepository.save(any()) } returnsArgument 0
         every { recipeHasImageUploadRepository.save(any()) } returnsArgument 0
 
-        val upload = uploadService.storeImage(recipe, stream)
+        val upload = uploadService.storeImage(recipe, image)
 
         verify { imageUploadRepository.save(any()) }
         verify { recipeHasImageUploadRepository.save(any()) }
@@ -63,8 +65,8 @@ class ImageUploadServiceUnitTest {
             recipeHasImageUploadRepository.findByRecipeAndNameAndType(recipe, upload.name, Type.ORIGINAL)
         } returns Optional.of(upload)
 
-        val image = uploadService.getUpload(recipe, upload.name, Type.ORIGINAL)
+        val result = uploadService.getUpload(recipe, upload.name, Type.ORIGINAL)
 
-        expectThat(image).isPresent()
+        expectThat(result).isPresent()
     }
 }

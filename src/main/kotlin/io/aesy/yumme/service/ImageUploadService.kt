@@ -7,15 +7,13 @@ import io.aesy.yumme.repository.RecipeHasImageUploadRepository
 import io.aesy.yumme.util.Images
 import io.aesy.yumme.util.Logging.getLogger
 import io.aesy.yumme.util.MD5
-import org.apache.commons.imaging.*
-import org.apache.commons.imaging.formats.png.PngConstants
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.awt.image.BufferedImage
 import java.io.*
 import java.util.*
-import java.util.zip.Deflater
+import javax.imageio.ImageIO
 import javax.transaction.Transactional
 import kotlin.math.min
 
@@ -64,10 +62,6 @@ class ImageUploadService(
         } catch (e: IOException) {
             logger.error("Failed to read image ${upload.fileName}", e)
             return Optional.empty()
-        } catch (e: ImageReadException) {
-            logger.error("Failed to process image ${upload.fileName}", e)
-
-            return Optional.empty()
         }
 
         return Optional.of(image)
@@ -75,25 +69,11 @@ class ImageUploadService(
 
     @Transactional
     @Throws(IOException::class)
-    fun storeImage(recipe: Recipe, stream: InputStream): RecipeHasImageUpload {
-        val image = try {
-            Imaging.getBufferedImage(stream).also(Images::removeTransparency)
-        } catch (e: ImageReadException) {
-            logger.error("Failed to store image: Couldn't read image stream", e)
-            throw IOException(e)
-        }
-
-        val bytes = try {
-            image.toBytes()
-        } catch (e: ImageWriteException) {
-            logger.error("Failed to store image: Couldn't write image bytes", e)
-            throw IOException(e)
-        }
-
+    fun storeImage(recipe: Recipe, image: BufferedImage): RecipeHasImageUpload {
+        val bytes = image.apply(Images::removeTransparency).toBytes()
         val imageName = generateImageName(recipe)
         val fileName = generateNewFileName(recipe)
         val hash = MD5.hash(bytes)
-
         val upload = ImageUpload(
             fileName = fileName,
             width = image.width,
@@ -160,7 +140,7 @@ class ImageUploadService(
     @Transactional
     @Scheduled(fixedRate = 15 * 60 * 1000)
     internal fun deleteOrphanedImages() {
-        logger.debug("Checking for ophaned image uploads")
+        logger.debug("Checking for orphaned image uploads")
 
         val paths = fileStorageService.getAllFilePaths()
 
@@ -207,19 +187,19 @@ class ImageUploadService(
         Type.THUMBNAIL -> "thumbnail"
     }
 
-    @Throws(IOException::class, ImageReadException::class)
+    @Throws(IOException::class)
     private fun ImageUpload.read(): BufferedImage {
         val file = fileStorageService.read(fileName)
-        val bytes = file.readAllBytes()
 
-        return Imaging.getBufferedImage(bytes)
+        return ImageIO.read(file)
     }
 
-    @Throws(IOException::class, ImageWriteException::class)
+    @Throws(IOException::class)
     private fun BufferedImage.toBytes(): ByteArray {
-        val params = mutableMapOf<String, Any>()
-        params[PngConstants.PARAM_KEY_PNG_COMPRESSION_LEVEL] = Deflater.DEFLATED
+        ByteArrayOutputStream().use {
+            ImageIO.write(this, "png", it)
 
-        return Imaging.writeImageToBytes(this, ImageFormats.PNG, params)
+            return it.toByteArray()
+        }
     }
 }

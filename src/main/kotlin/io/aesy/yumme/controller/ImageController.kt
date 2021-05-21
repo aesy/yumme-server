@@ -10,8 +10,6 @@ import io.aesy.yumme.service.ImageUploadService
 import io.aesy.yumme.service.RecipeService
 import io.aesy.yumme.util.AccessControl.canWrite
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.apache.commons.imaging.ImageReadException
-import org.apache.commons.imaging.Imaging
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.shiro.authz.annotation.RequiresAuthentication
 import org.springframework.http.*
@@ -25,6 +23,7 @@ import java.io.IOException
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.util.*
+import javax.imageio.ImageIO
 import javax.transaction.Transactional
 
 @Tag(name = "Recipe")
@@ -94,17 +93,15 @@ class ImageController(
             .filter { user.canWrite(it) }
             .orElseThrow { ResourceNotFound() }
 
-        val size = try {
-            Imaging.getImageSize(file.inputStream, file.originalFilename)
-        } catch (e: ImageReadException) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Failed to parse image")
+        val image = try {
+            ImageIO.read(file.inputStream)
         } catch (e: IOException) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Failed to read image")
         }
 
         val minimumSize = Type.ORIGINAL.dimensions
 
-        if (size.width < minimumSize.width || size.height < minimumSize.height) {
+        if (image.width < minimumSize.width || image.height < minimumSize.height) {
             throw ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
                 "Image must be larger than ${minimumSize.width}x${minimumSize.height}"
@@ -112,7 +109,7 @@ class ImageController(
         }
 
         val upload = try {
-            imageUploadService.storeImage(recipe, file.inputStream)
+            imageUploadService.storeImage(recipe, image)
         } catch (e: IOException) {
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to process image")
         }

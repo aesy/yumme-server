@@ -7,10 +7,11 @@ import io.aesy.yumme.service.RecipeService
 import io.aesy.yumme.service.UserService
 import io.aesy.yumme.util.Recipes
 import io.aesy.yumme.util.Users.createUser
-import org.apache.commons.imaging.Imaging
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.*
 import org.springframework.core.io.ClassPathResource
@@ -21,8 +22,10 @@ import org.springframework.util.LinkedMultiValueMap
 import strikt.api.expectCatching
 import strikt.api.expectThat
 import strikt.assertions.*
+import java.io.ByteArrayInputStream
 import java.nio.file.Files
 import java.util.concurrent.TimeUnit
+import javax.imageio.ImageIO
 
 @TestType.RestApi
 class ImageRestApiTest {
@@ -45,13 +48,14 @@ class ImageRestApiTest {
         }
     }
 
-    @Test
-    fun `It should be possible to upload an image`() {
+    @ParameterizedTest
+    @ValueSource(strings = ["testData/large_image.png", "testData/large_image.jpg"])
+    fun `It should be possible to upload an image`(resource: String) {
         val author = userService.createUser("test", "woop", "secret")
         val recipe = recipeService.save(Recipes.random(author))
 
         val parameters = LinkedMultiValueMap<String, Any>()
-        parameters.add("file", ClassPathResource("testData/large_image.png"))
+        parameters.add("file", ClassPathResource(resource))
         val headers = HttpHeaders()
         headers.contentType = MediaType.MULTIPART_FORM_DATA
         val entity = HttpEntity(parameters, headers)
@@ -112,7 +116,7 @@ class ImageRestApiTest {
 
                 expectThat(response.body)
                     .isNotNull()
-                    .get(Imaging::getBufferedImage)
+                    .get { ByteArrayInputStream(this).use(ImageIO::read) }
                     .get {
                         expectThat(width).isEqualTo(Type.THUMBNAIL.dimensions.width)
                         expectThat(height).isEqualTo(Type.THUMBNAIL.dimensions.height)
