@@ -3,8 +3,8 @@ package io.aesy.yumme.dto
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import io.aesy.yumme.converter.DurationLongJacksonConverter
-import io.aesy.yumme.converter.LongDurationJacksonConverter
+import io.aesy.yumme.converter.DurationLongSecondsJacksonConverter
+import io.aesy.yumme.converter.LongSecondsDurationJacksonConverter
 import io.aesy.yumme.validation.MaxDuration
 import io.aesy.yumme.validation.MinDuration
 import org.hibernate.validator.constraints.Length
@@ -24,16 +24,16 @@ class UpdateRecipeRequest(
     @field:JsonProperty("public")
     var public: Boolean? = null,
     @field:JsonProperty("prep_time")
-    @field:JsonSerialize(converter = DurationLongJacksonConverter::class)
-    @field:JsonDeserialize(converter = LongDurationJacksonConverter::class)
+    @field:JsonSerialize(converter = DurationLongSecondsJacksonConverter::class)
+    @field:JsonDeserialize(converter = LongSecondsDurationJacksonConverter::class)
     @field:MaxDuration(1, ChronoUnit.DAYS)
     @field:MinDuration(0, ChronoUnit.SECONDS)
     var prepTime: Duration? = null,
     @field:MaxDuration(1, ChronoUnit.DAYS)
     @field:MinDuration(0, ChronoUnit.SECONDS)
     @field:JsonProperty("cook_time")
-    @field:JsonSerialize(converter = DurationLongJacksonConverter::class)
-    @field:JsonDeserialize(converter = LongDurationJacksonConverter::class)
+    @field:JsonSerialize(converter = DurationLongSecondsJacksonConverter::class)
+    @field:JsonDeserialize(converter = LongSecondsDurationJacksonConverter::class)
     var cookTime: Duration? = null,
     @field:Max(100)
     @field:Min(1)

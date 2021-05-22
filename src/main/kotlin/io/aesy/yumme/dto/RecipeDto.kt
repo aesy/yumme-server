@@ -3,8 +3,8 @@ package io.aesy.yumme.dto
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import io.aesy.yumme.converter.DurationLongJacksonConverter
-import io.aesy.yumme.converter.LongDurationJacksonConverter
+import io.aesy.yumme.converter.DurationLongSecondsJacksonConverter
+import io.aesy.yumme.converter.LongSecondsDurationJacksonConverter
 import java.time.Duration
 
 @Dto
@@ -25,13 +25,13 @@ class RecipeDto(
     var rating: RatingSummaryDto?,
 
     @JsonProperty("prep_time")
-    @JsonSerialize(converter = DurationLongJacksonConverter::class)
-    @JsonDeserialize(converter = LongDurationJacksonConverter::class)
+    @JsonSerialize(converter = DurationLongSecondsJacksonConverter::class)
+    @JsonDeserialize(converter = LongSecondsDurationJacksonConverter::class)
     var prepTime: Duration? = Duration.ofMinutes(10),
 
     @JsonProperty("cook_time")
-    @JsonSerialize(converter = DurationLongJacksonConverter::class)
-    @JsonDeserialize(converter = LongDurationJacksonConverter::class)
+    @JsonSerialize(converter = DurationLongSecondsJacksonConverter::class)
+    @JsonDeserialize(converter = LongSecondsDurationJacksonConverter::class)
     var cookTime: Duration? = Duration.ofMinutes(20),
 
     @JsonProperty

@@ -1,6 +1,5 @@
 package io.aesy.yumme.entity
 
-import io.aesy.yumme.converter.DurationLongPersistenceConverter
 import org.hibernate.annotations.Generated
 import org.hibernate.annotations.GenerationTime
 import java.time.Duration
@@ -24,11 +23,9 @@ class Recipe(
     @Column(name = "directions", nullable = false)
     var directions: String,
 
-    @Convert(converter = DurationLongPersistenceConverter::class)
     @Column(name = "prep_time", nullable = false)
     var prepTime: Duration,
 
-    @Convert(converter = DurationLongPersistenceConverter::class)
     @Column(name = "cook_time", nullable = false)
     var cookTime: Duration,
 

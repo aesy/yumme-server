@@ -7,8 +7,8 @@ import strikt.assertions.isEqualTo
 import java.time.Duration
 
 @TestType.Unit
-class LongDurationJacksonConverterUnitTest {
-    private val converter = LongDurationJacksonConverter()
+class LongSecondsDurationJacksonConverterUnitTest {
+    private val converter = LongSecondsDurationJacksonConverter()
 
     @Test
     fun `It should convert a long to a duration in seconds`() {
