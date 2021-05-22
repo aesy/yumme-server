@@ -26,7 +26,7 @@ Web frontend counterpart can be found [here](https://github.com/aesy/yumme-web).
 * [Gradle 6.5+](https://gradle.org/)
 * [A Java 11+ Runtime](https://adoptopenjdk.net/)
 * [Docker](https://docs.docker.com/get-docker/) + [Docker Compose](https://docs.docker.com/compose/install/)
-* [MySQL](https://www.mysql.com/downloads/) or [MariaDB](https://mariadb.org/download/)
+* [MariaDB 10.5+](https://mariadb.org/download/)
 
 #### Build
 

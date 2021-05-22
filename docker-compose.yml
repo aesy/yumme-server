@@ -14,7 +14,7 @@ services:
     - mariadb
   mariadb:
     container_name: mariadb
-    image: mariadb:latest
+    image: mariadb:10.6.0
     environment:
     - MYSQL_DATABASE=yumme
     - MYSQL_ROOT_PASSWORD=root

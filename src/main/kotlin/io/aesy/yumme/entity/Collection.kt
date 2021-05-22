@@ -1,6 +1,5 @@
 package io.aesy.yumme.entity
 
-import io.aesy.yumme.converter.InstantIntPersistenceConverter
 import org.hibernate.annotations.Generated
 import org.hibernate.annotations.GenerationTime
 import java.time.Instant
@@ -25,7 +24,6 @@ class Collection(
     var public: Boolean = false
 
     @Column(name = "created_at", nullable = false)
-    @Convert(converter = InstantIntPersistenceConverter::class)
     @Generated(GenerationTime.INSERT)
     var createdAt: Instant = Instant.now()
 

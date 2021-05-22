@@ -1,6 +1,5 @@
 package io.aesy.yumme.entity
 
-import io.aesy.yumme.converter.InstantIntPersistenceConverter
 import org.hibernate.annotations.*
 import java.time.Instant
 import javax.persistence.*
@@ -35,12 +34,10 @@ class User(
     var roles: MutableSet<Role> = mutableSetOf()
 ) {
     @Column(name = "created_at", nullable = false)
-    @Convert(converter = InstantIntPersistenceConverter::class)
     @Generated(GenerationTime.INSERT)
     var createdAt: Instant = Instant.now()
 
     @Column(name = "modified_at", nullable = false)
-    @Convert(converter = InstantIntPersistenceConverter::class)
     @Generated(GenerationTime.ALWAYS)
     var modifiedAt: Instant = Instant.now()
 
