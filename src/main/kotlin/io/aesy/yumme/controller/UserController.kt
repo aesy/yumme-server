@@ -10,10 +10,12 @@ import io.aesy.yumme.mapper.UserMapper
 import io.aesy.yumme.service.UserService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.apache.shiro.authz.annotation.RequiresAuthentication
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 import javax.transaction.Transactional
 import javax.validation.Valid
 
@@ -29,6 +31,9 @@ class UserController(
     private val users: UserService,
     private val mapper: UserMapper
 ) {
+    @Value("\${yumme.registration.enabled}")
+    val registrationEnabled: Boolean = false
+
     @RequiresAuthentication
     @GetMapping("/me")
     @ResponseStatus(HttpStatus.OK)
@@ -58,12 +63,15 @@ class UserController(
     fun registerUser(
         @Valid @RequestBody request: RegisterRequest
     ) {
+        if (!registrationEnabled) {
+            throw ResponseStatusException(HttpStatus.FORBIDDEN, "Registration is disabled")
+        }
+
         val userName = request.userName!!
         val displayName = request.displayName!!
         val password = request.password!!
 
-        users.register(userName, displayName, password).also { user ->
-            users.addRoleToUser(user, Role.USER)
-        }
+        users.register(userName, displayName, password)
+            .also { users.addRoleToUser(it, Role.USER) }
     }
 }

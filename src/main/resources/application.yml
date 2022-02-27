@@ -1,4 +1,7 @@
 yumme:
+  registration:
+    enabled: ${REGISTRATION_ENABLED:false}
+
   admin:
     username: ${ADMIN_USERNAME:admin}
     password: ${ADMIN_PASSWORD:admin}

@@ -5,10 +5,12 @@ import io.aesy.yumme.dto.RegisterRequest
 import io.aesy.yumme.dto.UserDto
 import io.aesy.yumme.service.UserService
 import io.aesy.yumme.util.Users.createUser
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.*
 import org.springframework.http.HttpStatus
+import org.springframework.test.util.ReflectionTestUtils
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isNotNull
@@ -19,7 +21,15 @@ class UserRestApiTest {
     private lateinit var restTemplate: TestRestTemplate
 
     @Autowired
+    private lateinit var userController: UserController
+
+    @Autowired
     private lateinit var userService: UserService
+
+    @BeforeEach
+    fun setup() {
+        ReflectionTestUtils.setField(userController, UserController::registrationEnabled.name, true)
+    }
 
     @Test
     fun `It should be possible to fetch the authenticated user`() {
@@ -52,7 +62,7 @@ class UserRestApiTest {
     @Test
     fun `It should be possible to register a new user`() {
         val request = RegisterRequest("test", "woop", "secret123")
-         val response = restTemplate.postForEntity<Unit>("/user/register", request)
+        val response = restTemplate.postForEntity<Unit>("/user/register", request)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.CREATED)
     }
@@ -64,5 +74,15 @@ class UserRestApiTest {
         val response = restTemplate.postForEntity<Unit>("/user/register", request)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.CONFLICT)
+    }
+
+    @Test
+    fun `It should not be possible to register a user if registration is disabled`() {
+        ReflectionTestUtils.setField(userController, UserController::registrationEnabled.name, false)
+
+        val request = RegisterRequest("test", "woop", "secret123")
+        val response = restTemplate.postForEntity<Unit>("/user/register", request)
+
+        expectThat(response.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
     }
 }

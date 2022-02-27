@@ -9,13 +9,13 @@ class RegisterRequest(
     @field:Length(min = 4, max = 64)
     @field:NotEmpty
     @field:JsonProperty("user_name")
-    var userName: String?,
+    var userName: String,
     @field:Length(min = 4, max = 64)
     @field:NotEmpty
     @field:JsonProperty("display_name")
-    var displayName: String?,
+    var displayName: String,
     @field:Length(min = 8, max = 256)
     @field:NotEmpty
     @field:JsonProperty("password")
-    var password: String?
+    var password: String
 )

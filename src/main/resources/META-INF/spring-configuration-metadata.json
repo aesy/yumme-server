@@ -1,6 +1,10 @@
 {
   "properties": [
     {
+      "name": "yumme.registration.enabled",
+      "type": "java.lang.Boolean"
+    },
+    {
       "name": "yumme.admin.username",
       "type": "java.lang.String"
     }, {
