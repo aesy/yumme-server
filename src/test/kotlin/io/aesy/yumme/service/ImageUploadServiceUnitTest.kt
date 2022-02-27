@@ -23,8 +23,7 @@ import javax.imageio.ImageIO
 @SpringBootTest(
     classes = [
         ImageUploadService::class,
-        FileStorageService::class,
-        SlugService::class
+        FileStorageService::class
     ]
 )
 class ImageUploadServiceUnitTest {

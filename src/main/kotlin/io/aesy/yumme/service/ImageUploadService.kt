@@ -10,6 +10,7 @@ import io.aesy.yumme.repository.ImageUploadRepository
 import io.aesy.yumme.repository.RecipeHasImageUploadRepository
 import io.aesy.yumme.util.Logging.getLogger
 import io.aesy.yumme.util.MD5
+import io.aesy.yumme.util.Slugs
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -23,7 +24,6 @@ import kotlin.math.min
 @Service
 class ImageUploadService(
     private val fileStorageService: FileStorageService,
-    private val slugService: SlugService,
     private val imageUploadRepository: ImageUploadRepository,
     private val recipeHasImageUploadRepository: RecipeHasImageUploadRepository
 ) {
@@ -168,12 +168,12 @@ class ImageUploadService(
     private fun generateImageName(recipe: Recipe): String {
         val name = recipe.title.substring(0, min(20, recipe.title.length))
 
-        return slugService.generateSlug(name, 30)
+        return Slugs.create(name, 30)
     }
 
     private fun generateNewFileName(recipe: Recipe): String {
         val name = recipe.title.substring(0, min(20, recipe.title.length))
-        val slug = slugService.generateSlug(name, 50)
+        val slug = Slugs.create(name, 50)
         val suffix = Type.ORIGINAL.toFileNamePart()
 
         return "$FILENAME_PREFIX-$slug-$suffix.png"

@@ -1,4 +1,4 @@
-package io.aesy.yumme.service
+package io.aesy.yumme.util
 
 import io.aesy.test.TestType
 import org.junit.jupiter.params.ParameterizedTest
@@ -9,13 +9,12 @@ import strikt.assertions.hasLength
 import kotlin.math.min
 
 @TestType.Unit
-class SlugServiceUnitTest {
+class SlugsUnitTest {
     @ParameterizedTest
     @ValueSource(ints = [5, 10, 100])
     fun `It should generate a slug of a specific length based on a given name`(limit: Int) {
-        val slugService = SlugService()
         val name = "base-name"
-        val slug = slugService.generateSlug(name, limit)
+        val slug = Slugs.create(name, limit)
 
         expectThat(slug)
             .contains(name.substring(0, min(limit, name.length)))
