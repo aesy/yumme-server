@@ -22,6 +22,7 @@ import strikt.api.expectCatching
 import strikt.api.expectThat
 import strikt.assertions.*
 import strikt.java.isAbsent
+import strikt.java.isPresent
 import java.time.Duration
 
 @TestType.RestApi
@@ -39,7 +40,13 @@ class RecipeRestApiTest {
     private lateinit var categoryService: CategoryService
 
     @Autowired
+    private lateinit var ingredientService: IngredientService
+
+    @Autowired
     private lateinit var ratingService: RatingService
+
+    @Autowired
+    private lateinit var tagService: TagService
 
     @Autowired
     private lateinit var imageUploadRepository: ImageUploadRepository
@@ -234,8 +241,22 @@ class RecipeRestApiTest {
     @Test
     fun `It should be possible to replace an old recipe`() {
         val author = userService.createUser("test@test.com", "woop", "secret")
-        categoryService.save(Category(name = "abc"))
-        val recipe = recipeService.save(Recipes.random(author))
+        val recipe = Recipes.random(author)
+
+        for (name in listOf("keep", "remove")) {
+            recipe.categories.add(Category(name = name))
+        }
+
+        for (name in listOf("keep", "remove")) {
+            recipe.tags.add(Tag(name = name, recipe = recipe))
+        }
+
+        for (name in listOf("keep", "remove")) {
+            recipe.ingredients.add(Ingredient(name = name))
+        }
+
+        recipeService.save(recipe)
+
         val request = CreateRecipeRequest(
             "wawawa",
             "wawawa",
@@ -245,8 +266,9 @@ class RecipeRestApiTest {
             Duration.ofHours(2),
             3
         ).apply {
-            categories = mutableSetOf("abc")
-            tags = mutableSetOf("def")
+            categories = mutableSetOf("keep")
+            tags = mutableSetOf("keep", "add")
+            ingredients = mutableSetOf("keep", "add")
         }
 
         restTemplate.withBasicAuth(author.userName, "secret")
@@ -254,12 +276,32 @@ class RecipeRestApiTest {
 
         val result = recipeService.getById(recipe.id!!).get()
 
-        expectThat(result.title).isEqualTo("wawawa")
-        expectThat(result.description).isEqualTo("wawawa")
-        expectThat(result.public).isTrue()
-        expectThat(result.prepTime).isEqualTo(Duration.ofHours(1))
-        expectThat(result.cookTime).isEqualTo(Duration.ofHours(2))
-        expectThat(result.yield).isEqualTo(3)
+        expectThat(result.title).isEqualTo(request.title)
+        expectThat(result.description).isEqualTo(request.description)
+        expectThat(result.public).isEqualTo(request.public)
+        expectThat(result.prepTime).isEqualTo(request.prepTime)
+        expectThat(result.cookTime).isEqualTo(request.cookTime)
+        expectThat(result.yield).isEqualTo(request.yield)
+        expectThat(result.categories).map(Category::name).containsExactlyInAnyOrder("keep")
+        expectThat(result.tags).map(Tag::name).containsExactlyInAnyOrder("keep", "add")
+        expectThat(result.ingredients).map(Ingredient::name).containsExactlyInAnyOrder("keep", "add")
+
+        // Categories and ingredients should not be removed once created
+        expectThat(categoryService.getByName("remove")).isPresent()
+        expectThat(ingredientService.getByName("remove")).isPresent()
+
+        // Categories, ingredients and tags should not be recreated if already existing
+        val categoryId = recipe.categories.find { it.name == "keep" }!!.id
+        expectThat(categoryService.getByName("keep")).isPresent()
+            .get { expectThat(id).isEqualTo(categoryId) }
+
+        val ingredientId = recipe.ingredients.find { it.name == "keep" }!!.id
+        expectThat(ingredientService.getByName("keep")).isPresent()
+            .get { expectThat(id).isEqualTo(ingredientId) }
+
+        val tagId = recipe.tags.find { it.name == "keep" }!!.id
+        expectThat(tagService.getByNameAndRecipe("keep", recipe)).isPresent()
+            .get { expectThat(id).isEqualTo(tagId) }
     }
 
     @Test
@@ -315,14 +357,35 @@ class RecipeRestApiTest {
 
     @Test
     fun `It should be possible to update an old recipe`() {
-        val author = userService.createUser("test", "woop", "secret")
-        val recipe = recipeService.save(Recipes.random(author))
+        val author = userService.createUser("test@test.com", "woop", "secret")
+        val recipe = Recipes.random(author)
+
+        for (name in listOf("keep", "remove")) {
+            recipe.categories.add(Category(name = name))
+        }
+
+        for (name in listOf("keep", "remove")) {
+            recipe.tags.add(Tag(name = name, recipe = recipe))
+        }
+
+        for (name in listOf("keep", "remove")) {
+            recipe.ingredients.add(Ingredient(name = name))
+        }
+
+        recipeService.save(recipe)
+
         val request = UpdateRecipeRequest(
             "wawawa",
-        ).apply {
-            categories = mutableSetOf("abc")
-            tags = mutableSetOf("def")
-        }
+            "wawawa",
+            true,
+            Duration.ofHours(1),
+            Duration.ofHours(2),
+            3,
+            mutableListOf("woop"),
+            mutableSetOf("keep", "add"),
+            mutableSetOf("keep"),
+            mutableSetOf("keep", "add")
+        )
 
         restTemplate.withBasicAuth(author.userName, "secret")
             .patchForObject<Unit>("/recipe/${recipe.id}", request)
@@ -330,7 +393,31 @@ class RecipeRestApiTest {
         val result = recipeService.getById(recipe.id!!).get()
 
         expectThat(result.title).isEqualTo(request.title)
-        expectThat(result.description).isEqualTo(recipe.description)
+        expectThat(result.description).isEqualTo(request.description)
+        expectThat(result.public).isEqualTo(request.public)
+        expectThat(result.prepTime).isEqualTo(request.prepTime)
+        expectThat(result.cookTime).isEqualTo(request.cookTime)
+        expectThat(result.yield).isEqualTo(request.yield)
+        expectThat(result.categories).map(Category::name).containsExactlyInAnyOrder("keep")
+        expectThat(result.tags).map(Tag::name).containsExactlyInAnyOrder("keep", "add")
+        expectThat(result.ingredients).map(Ingredient::name).containsExactlyInAnyOrder("keep", "add")
+
+        // Categories and ingredients should not be removed once created
+        expectThat(categoryService.getByName("remove")).isPresent()
+        expectThat(ingredientService.getByName("remove")).isPresent()
+
+        // Categories, ingredients and tags should not be recreated if already existing
+        val categoryId = recipe.categories.find { it.name == "keep" }!!.id
+        expectThat(categoryService.getByName("keep")).isPresent()
+            .get { expectThat(id).isEqualTo(categoryId) }
+
+        val ingredientId = recipe.ingredients.find { it.name == "keep" }!!.id
+        expectThat(ingredientService.getByName("keep")).isPresent()
+            .get { expectThat(id).isEqualTo(ingredientId) }
+
+        val tagId = recipe.tags.find { it.name == "keep" }!!.id
+        expectThat(tagService.getByNameAndRecipe("keep", recipe)).isPresent()
+            .get { expectThat(id).isEqualTo(tagId) }
     }
 
     @Test

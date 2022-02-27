@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import strikt.api.expectThat
 import strikt.assertions.*
+import strikt.java.isPresent
 
 @TestType.Persistence
 class TagRepositoryPersistenceTest {
@@ -28,6 +29,21 @@ class TagRepositoryPersistenceTest {
         val tag = tagRepository.save(Tag(name = "woop", recipe = recipe))
 
         expectThat(tag.id).isNotNull()
+    }
+
+    @Test
+    fun `It should be possible to fetch tag by name and recipe`() {
+        val author = userRepository.save(Users.random())
+        val recipe1 = recipeRepository.save(Recipes.random(author))
+        val recipe2 = recipeRepository.save(Recipes.random(author))
+        val tag = tagRepository.save(Tag(name = "woop", recipe = recipe1))
+        tagRepository.save(Tag(name = "woop", recipe = recipe2)) // Should not be included in result
+
+        val result = tagRepository.findByNameAndRecipe("woop", recipe1)
+
+        expectThat(result)
+            .isPresent()
+            .get { expectThat(id).isEqualTo(tag.id) }
     }
 
     @Test

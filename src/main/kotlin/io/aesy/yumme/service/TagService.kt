@@ -6,12 +6,18 @@ import io.aesy.yumme.repository.TagRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.util.*
 import javax.transaction.Transactional
 
 @Service
 class TagService(
     private val tagRepository: TagRepository
 ) {
+    @Transactional
+    fun getByNameAndRecipe(name: String, recipe: Recipe): Optional<Tag> {
+        return tagRepository.findByNameAndRecipe(name, recipe)
+    }
+
     @Transactional
     fun getAll(limit: Int = 0, offset: Int = 0): List<Tag> {
         val page = if (limit > 0) {

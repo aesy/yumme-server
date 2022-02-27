@@ -2,23 +2,24 @@ package io.aesy.yumme.controller
 
 import io.aesy.yumme.auth.AuthorizedUser
 import io.aesy.yumme.dto.*
-import io.aesy.yumme.entity.*
+import io.aesy.yumme.entity.User
 import io.aesy.yumme.exception.ResourceNotFound
 import io.aesy.yumme.mapper.RecipeMapper
-import io.aesy.yumme.service.*
+import io.aesy.yumme.service.RecipeService
+import io.aesy.yumme.service.UserService
 import io.aesy.yumme.util.AccessControl.canRead
 import io.aesy.yumme.util.AccessControl.canWrite
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.apache.shiro.authz.annotation.RequiresAuthentication
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.server.ResponseStatusException
 import javax.transaction.Transactional
 import javax.validation.Valid
 import kotlin.math.min
 
-@io.swagger.v3.oas.annotations.tags.Tag(name = "Recipe")
+@Tag(name = "Recipe")
 @RestController
 @RequestMapping(
     "recipe",
@@ -28,9 +29,6 @@ import kotlin.math.min
 @Validated
 class RecipeController(
     private val recipeService: RecipeService,
-    private val categoryService: CategoryService,
-    private val ingredientService: IngredientService,
-    private val tagService: TagService,
     private val userService: UserService,
     private val mapper: RecipeMapper
 ) {
@@ -129,24 +127,7 @@ class RecipeController(
         @AuthorizedUser user: User,
         @Valid @RequestBody request: CreateRecipeRequest
     ): RecipeDto {
-        val recipe = recipeService.save(mapper.toEntity(request, user))
-
-        for (name in request.categories) {
-            val category = categoryService.getByName(name)
-                .orElseThrow { ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown category $name") }
-            recipe.categories.add(category)
-        }
-
-        for (name in request.tags) {
-            val tag = tagService.save(Tag(name = name, recipe = recipe))
-            recipe.tags.add(tag)
-        }
-
-        for (name in request.ingredients) {
-            val ingredient = ingredientService.getByName(name)
-                .orElseGet { Ingredient(name = name) }
-            recipe.ingredients.add(ingredient)
-        }
+        val recipe = mapper.toEntity(request, user)
 
         recipeService.save(recipe)
 
@@ -162,35 +143,14 @@ class RecipeController(
         @PathVariable("id") id: Long,
         @Valid @RequestBody request: CreateRecipeRequest
     ): RecipeDto {
-        val oldRecipe = recipeService.getById(id)
+        val recipe = recipeService.getById(id)
             .filter { user.canWrite(it) }
+            .map { mapper.toEntity(request, it) }
             .orElseThrow { ResourceNotFound() }
 
-        val newRecipe = mapper.toEntity(request, oldRecipe.author)
-        newRecipe.id = id
-        newRecipe.categories.clear()
-        newRecipe.tags.clear()
+        recipeService.save(recipe)
 
-        for (name in request.categories) {
-            val category = categoryService.getByName(name)
-                .orElseThrow { ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown category $name") }
-            newRecipe.categories.add(category)
-        }
-
-        for (name in request.tags) {
-            val tag = tagService.save(Tag(name = name, recipe = newRecipe))
-            newRecipe.tags.add(tag)
-        }
-
-        for (name in request.ingredients) {
-            val ingredient = ingredientService.getByName(name)
-                .orElseGet { Ingredient(name = name) }
-            newRecipe.ingredients.add(ingredient)
-        }
-
-        recipeService.save(newRecipe)
-
-        return mapper.toDto(newRecipe)
+        return mapper.toDto(recipe)
     }
 
     @RequiresAuthentication
@@ -204,37 +164,8 @@ class RecipeController(
     ): RecipeDto {
         val recipe = recipeService.getById(id)
             .filter { user.canWrite(it) }
+            .map { mapper.toEntity(request, it) }
             .orElseThrow { ResourceNotFound() }
-
-        if (request.title != null) {
-            recipe.title = request.title!!
-        }
-
-        if (request.description != null) {
-            recipe.description = request.description!!
-        }
-
-        if (request.prepTime != null) {
-            recipe.prepTime = request.prepTime!!
-        }
-
-        if (request.cookTime != null) {
-            recipe.cookTime = request.cookTime!!
-        }
-
-        if (request.yield != null) {
-            recipe.yield = request.yield!!
-        }
-
-        if (request.public != null) {
-            recipe.public = request.public!!
-        }
-
-        if (request.directions.isNotEmpty()) {
-            recipe.directions = mapper.serializeDirections(request.directions)
-        }
-
-        // TODO tags, categories, ingredients
 
         recipeService.save(recipe)
 

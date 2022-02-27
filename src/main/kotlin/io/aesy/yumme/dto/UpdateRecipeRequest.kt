@@ -39,16 +39,12 @@ class UpdateRecipeRequest(
     @field:Min(1)
     @field:JsonProperty("yield")
     var yield: Int? = null,
-) {
     @field:JsonProperty("directions")
-    var directions: MutableList<String> = mutableListOf()
-
+    var directions: MutableList<String>?,
     @field:JsonProperty("tags")
-    var tags: MutableSet<String> = mutableSetOf()
-
+    var tags: MutableSet<String>?,
     @field:JsonProperty("categories")
-    var categories: MutableSet<String> = mutableSetOf()
-
+    var categories: MutableSet<String>?,
     @field:JsonProperty("ingredients")
-    var ingredients: MutableSet<String> = mutableSetOf()
-}
+    var ingredients: MutableSet<String>?
+)
