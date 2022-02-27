@@ -24,6 +24,7 @@ object TestType {
      */
     @Tag("IntegrationTest")
     @ExtendWith(MariaDBExtension::class)
+    @ExtendWith(RedisExtension::class)
     annotation class Integration
 
     /**

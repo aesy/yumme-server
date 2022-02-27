@@ -1,6 +1,7 @@
 package io.aesy.yumme.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.io.Serializable
 
 @Dto
 class RatingSummaryDto(
@@ -9,4 +10,4 @@ class RatingSummaryDto(
 
     @JsonProperty
     var count: Long?
-)
+): Serializable

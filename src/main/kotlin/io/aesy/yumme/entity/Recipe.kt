@@ -2,6 +2,7 @@ package io.aesy.yumme.entity
 
 import org.hibernate.annotations.Generated
 import org.hibernate.annotations.GenerationTime
+import java.io.Serializable
 import java.time.Duration
 import java.time.Instant
 import javax.persistence.*
@@ -35,7 +36,7 @@ class Recipe(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author", nullable = false)
     var author: User
-) {
+): Serializable {
     @Column(name = "public", nullable = false)
     var public: Boolean = false
 

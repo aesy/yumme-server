@@ -42,6 +42,7 @@ class MariaDBExtension: BeforeAllCallback, BeforeEachCallback, AfterEachCallback
 
     override fun close() {
         container?.stop()
+        container = null
     }
 
     private fun getSpringContext(context: ExtensionContext): Optional<ApplicationContext> = try {
@@ -55,6 +56,7 @@ class MariaDBExtension: BeforeAllCallback, BeforeEachCallback, AfterEachCallback
             withDatabaseName(DATABASE_NAME)
             withUsername("test")
             withPassword("test")
+            withReuse(true)
             start()
         }
 
