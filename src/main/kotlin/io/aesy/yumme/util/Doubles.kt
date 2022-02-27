@@ -1,9 +1,10 @@
 package io.aesy.yumme.util
 
-import kotlin.math.*
+import kotlin.math.pow
+import kotlin.math.roundToInt
 
 object Doubles {
-    fun Double.round(precision: Int): Double {
+    fun Double.roundToDouble(precision: Int = 0): Double {
         val pow = 10.0.pow(precision)
 
         return if (isFinite()) {

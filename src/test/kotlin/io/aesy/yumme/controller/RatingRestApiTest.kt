@@ -4,7 +4,7 @@ import io.aesy.test.TestType
 import io.aesy.yumme.dto.RatingSummaryDto
 import io.aesy.yumme.dto.RecipeDto
 import io.aesy.yumme.service.*
-import io.aesy.yumme.util.Doubles.round
+import io.aesy.yumme.util.Doubles.roundToDouble
 import io.aesy.yumme.util.Recipes
 import io.aesy.yumme.util.Users.createUser
 import org.junit.jupiter.api.Test
@@ -51,7 +51,7 @@ class RatingRestApiTest {
 
         val summary = response.body
 
-        expectThat(summary!!.average).isEqualTo(ratings.average().round(2))
+        expectThat(summary!!.average).isEqualTo(ratings.average().roundToDouble(2))
         expectThat(summary.count).isEqualTo(ratings.size.toLong())
     }
 

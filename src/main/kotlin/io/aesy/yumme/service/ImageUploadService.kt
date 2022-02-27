@@ -2,9 +2,12 @@ package io.aesy.yumme.service
 
 import io.aesy.yumme.entity.*
 import io.aesy.yumme.entity.RecipeHasImageUpload.Type
+import io.aesy.yumme.image.Alignment
+import io.aesy.yumme.image.BufferedImages.crop
+import io.aesy.yumme.image.BufferedImages.removeTransparency
+import io.aesy.yumme.image.BufferedImages.rescaleToCover
 import io.aesy.yumme.repository.ImageUploadRepository
 import io.aesy.yumme.repository.RecipeHasImageUploadRepository
-import io.aesy.yumme.util.Images
 import io.aesy.yumme.util.Logging.getLogger
 import io.aesy.yumme.util.MD5
 import org.springframework.cache.annotation.Cacheable
@@ -31,6 +34,7 @@ class ImageUploadService(
     }
 
     @Cacheable("default-upload-image")
+    @Synchronized
     fun getDefaultImage(type: Type): BufferedImage {
         throw NotImplementedError()
     }
@@ -70,7 +74,7 @@ class ImageUploadService(
     @Transactional
     @Throws(IOException::class)
     fun storeImage(recipe: Recipe, image: BufferedImage): RecipeHasImageUpload {
-        val bytes = image.apply(Images::removeTransparency).toBytes()
+        val bytes = image.removeTransparency().toBytes()
         val imageName = generateImageName(recipe)
         val fileName = generateNewFileName(recipe)
         val hash = MD5.hash(bytes)
@@ -109,8 +113,9 @@ class ImageUploadService(
 
                 val recipe = original.recipe
                 val image = original.upload.read()
-                val scaled = Images.rescaleToFit(image, type.dimensions)
-                val bytes = scaled.toBytes()
+                val cropped = image.rescaleToCover(type.dimensions)
+                    .crop(type.dimensions, Alignment.CENTER, Alignment.CENTER)
+                val bytes = cropped.toBytes()
                 val fileName = generateFileNameVariation(original, type)
                 val hash = MD5.hash(bytes)
 
@@ -118,8 +123,8 @@ class ImageUploadService(
 
                 val thumbnail = ImageUpload(
                     fileName = fileName,
-                    width = scaled.width,
-                    height = scaled.height,
+                    width = cropped.width,
+                    height = cropped.height,
                     hash = hash
                 )
 

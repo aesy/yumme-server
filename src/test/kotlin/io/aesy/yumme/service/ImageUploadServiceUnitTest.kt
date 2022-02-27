@@ -51,8 +51,7 @@ class ImageUploadServiceUnitTest {
     fun `It should be possible to store an image and get the original back by name`() {
         val author = Users.random()
         val recipe = Recipes.random(author)
-        val stream = Resources.open("/testData/small_image.png")
-        val image = ImageIO.read(stream)
+        val image = Resources.open("/testData/small_image.png").use(ImageIO::read)
 
         every { imageUploadRepository.save(any()) } returnsArgument 0
         every { recipeHasImageUploadRepository.save(any()) } returnsArgument 0

@@ -8,7 +8,6 @@ import io.aesy.yumme.service.UserService
 import io.aesy.yumme.util.Recipes
 import io.aesy.yumme.util.Users.createUser
 import org.awaitility.Awaitility.await
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
@@ -84,7 +83,6 @@ class ImageRestApiTest {
         expectThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
     }
 
-    @Disabled("Bug due to resize instead of crop")
     @Test
     fun `It should be possible to view a thumbnail within reasonable time`() {
         val author = userService.createUser("test", "woop", "secret")

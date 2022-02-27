@@ -9,6 +9,7 @@ import io.aesy.yumme.exception.ResourceNotFound
 import io.aesy.yumme.service.ImageUploadService
 import io.aesy.yumme.service.RecipeService
 import io.aesy.yumme.util.AccessControl.canWrite
+import io.aesy.yumme.util.Logging.getLogger
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.shiro.authz.annotation.RequiresAuthentication
@@ -39,6 +40,7 @@ class ImageController(
 ) {
     companion object {
         private val CACHE_DURATION = Duration.ofHours(12)
+        private val logger = getLogger()
     }
 
     @GetMapping(
@@ -111,6 +113,8 @@ class ImageController(
         val upload = try {
             imageUploadService.storeImage(recipe, image)
         } catch (e: IOException) {
+            logger.error("Failed to process image", e)
+
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to process image")
         }
 

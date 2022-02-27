@@ -3,7 +3,7 @@ package io.aesy.yumme.service
 import io.aesy.yumme.dto.RatingSummaryDto
 import io.aesy.yumme.entity.*
 import io.aesy.yumme.repository.RatingRepository
-import io.aesy.yumme.util.Doubles.round
+import io.aesy.yumme.util.Doubles.roundToDouble
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
@@ -17,7 +17,7 @@ class RatingService(
     @Cacheable("rating-summary", key = "#recipe.id")
     @Transactional
     fun getRatingSummary(recipe: Recipe): RatingSummaryDto {
-        var average = ratingRepository.findAverageByRecipe(recipe).round(2)
+        var average = ratingRepository.findAverageByRecipe(recipe).roundToDouble(2)
         val count = ratingRepository.findCountByRecipe(recipe)
 
         if (average.isNaN()) {
