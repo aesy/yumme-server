@@ -1,12 +1,12 @@
 package io.aesy.yumme.controller
 
 import io.aesy.test.TestType
+import io.aesy.test.util.Recipes
+import io.aesy.test.util.Users.createUser
 import io.aesy.yumme.dto.ImageUploadDto
 import io.aesy.yumme.entity.RecipeHasImageUpload.Type
 import io.aesy.yumme.service.RecipeService
 import io.aesy.yumme.service.UserService
-import io.aesy.yumme.util.Recipes
-import io.aesy.yumme.util.Users.createUser
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest

@@ -1,4 +1,4 @@
-package io.aesy.yumme.util
+package io.aesy.test.util
 
 import io.aesy.yumme.entity.Recipe
 import io.aesy.yumme.entity.User

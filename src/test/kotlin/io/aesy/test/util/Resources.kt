@@ -1,4 +1,4 @@
-package io.aesy.yumme.util
+package io.aesy.test.util
 
 import java.io.InputStream
 

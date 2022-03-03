@@ -1,15 +1,16 @@
 package io.aesy.yumme.controller
 
 import io.aesy.test.TestType
+import io.aesy.test.util.HTTP.getList
+import io.aesy.test.util.Recipes
+import io.aesy.test.util.Users.createUser
 import io.aesy.yumme.dto.*
 import io.aesy.yumme.entity.*
+import io.aesy.yumme.entity.RecipeHasImageUpload.Type
 import io.aesy.yumme.repository.ImageUploadRepository
 import io.aesy.yumme.repository.RecipeHasImageUploadRepository
 import io.aesy.yumme.service.*
-import io.aesy.yumme.util.HTTP.getList
-import io.aesy.yumme.util.Recipes
 import io.aesy.yumme.util.Strings
-import io.aesy.yumme.util.Users.createUser
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -478,7 +479,7 @@ class RecipeRestApiTest {
     private fun createOriginalMapping(upload: ImageUpload, recipe: Recipe): RecipeHasImageUpload {
         return RecipeHasImageUpload(
             name = Strings.random(30),
-            type = RecipeHasImageUpload.Type.ORIGINAL,
+            type = Type.ORIGINAL,
             recipe = recipe,
             upload = upload
         )

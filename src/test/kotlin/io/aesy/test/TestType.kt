@@ -1,5 +1,7 @@
 package io.aesy.test
 
+import io.aesy.test.extension.MariaDBExtension
+import io.aesy.test.extension.RedisExtension
 import io.mockk.junit5.MockKExtension
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.extension.ExtendWith

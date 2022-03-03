@@ -1,5 +1,6 @@
-package io.aesy.yumme.util
+package io.aesy.test.util
 
+import io.aesy.yumme.util.Types
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity

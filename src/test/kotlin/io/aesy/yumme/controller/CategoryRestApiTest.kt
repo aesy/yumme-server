@@ -1,13 +1,13 @@
 package io.aesy.yumme.controller
 
 import io.aesy.test.TestType
+import io.aesy.test.util.HTTP.getList
+import io.aesy.test.util.Recipes
+import io.aesy.test.util.Users.createAdmin
+import io.aesy.test.util.Users.createUser
 import io.aesy.yumme.dto.CategoryDto
 import io.aesy.yumme.entity.Category
 import io.aesy.yumme.service.*
-import io.aesy.yumme.util.HTTP.getList
-import io.aesy.yumme.util.Recipes
-import io.aesy.yumme.util.Users.createAdmin
-import io.aesy.yumme.util.Users.createUser
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.*

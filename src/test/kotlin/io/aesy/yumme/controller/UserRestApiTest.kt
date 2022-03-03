@@ -1,10 +1,10 @@
 package io.aesy.yumme.controller
 
 import io.aesy.test.TestType
+import io.aesy.test.util.Users.createUser
 import io.aesy.yumme.dto.RegisterRequest
 import io.aesy.yumme.dto.UserDto
 import io.aesy.yumme.service.UserService
-import io.aesy.yumme.util.Users.createUser
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

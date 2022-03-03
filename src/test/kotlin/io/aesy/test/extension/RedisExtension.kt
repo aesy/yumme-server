@@ -1,4 +1,4 @@
-package io.aesy.test
+package io.aesy.test.extension
 
 import org.junit.jupiter.api.extension.*
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace

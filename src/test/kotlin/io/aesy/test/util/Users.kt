@@ -1,8 +1,9 @@
-package io.aesy.yumme.util
+package io.aesy.test.util
 
 import io.aesy.yumme.entity.Role
 import io.aesy.yumme.entity.User
 import io.aesy.yumme.service.UserService
+import io.aesy.yumme.util.Strings
 
 object Users {
     fun random(): User = User(

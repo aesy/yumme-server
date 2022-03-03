@@ -1,4 +1,4 @@
-package io.aesy.test
+package io.aesy.test.extension
 
 import org.flywaydb.core.Flyway
 import org.junit.jupiter.api.extension.*

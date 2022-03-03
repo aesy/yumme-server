@@ -1,10 +1,10 @@
 package io.aesy.yumme.controller
 
 import io.aesy.test.TestType
+import io.aesy.test.util.Users.createUser
 import io.aesy.yumme.dto.TokenResponse
 import io.aesy.yumme.dto.UserDto
-import io.aesy.yumme.service.*
-import io.aesy.yumme.util.Users.createUser
+import io.aesy.yumme.service.UserService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.*

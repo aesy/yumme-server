@@ -1,9 +1,9 @@
 package io.aesy.yumme.repository
 
 import io.aesy.test.TestType
+import io.aesy.test.util.Recipes
+import io.aesy.test.util.Users
 import io.aesy.yumme.entity.Recipe
-import io.aesy.yumme.util.Recipes
-import io.aesy.yumme.util.Users
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import strikt.api.expectThat

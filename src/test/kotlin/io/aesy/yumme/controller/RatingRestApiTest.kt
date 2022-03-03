@@ -1,12 +1,12 @@
 package io.aesy.yumme.controller
 
 import io.aesy.test.TestType
+import io.aesy.test.util.Recipes
+import io.aesy.test.util.Users.createUser
 import io.aesy.yumme.dto.RatingSummaryDto
 import io.aesy.yumme.dto.RecipeDto
 import io.aesy.yumme.service.*
 import io.aesy.yumme.util.Doubles.roundToDouble
-import io.aesy.yumme.util.Recipes
-import io.aesy.yumme.util.Users.createUser
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource

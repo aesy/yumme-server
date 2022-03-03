@@ -2,10 +2,10 @@ package io.aesy.yumme.service
 
 import com.ninjasquad.springmockk.MockkBean
 import io.aesy.test.TestType
+import io.aesy.test.util.*
 import io.aesy.yumme.entity.RecipeHasImageUpload.Type
 import io.aesy.yumme.repository.ImageUploadRepository
 import io.aesy.yumme.repository.RecipeHasImageUploadRepository
-import io.aesy.yumme.util.*
 import io.mockk.every
 import io.mockk.verify
 import org.junit.jupiter.api.Test
