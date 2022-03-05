@@ -13,16 +13,22 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.testcontainers.containers.GenericContainer
 import java.util.*
 
-class RedisExtension: BeforeAllCallback, AfterEachCallback, Store.CloseableResource {
+class RedisExtension: BeforeAllCallback, AfterAllCallback, AfterEachCallback, Store.CloseableResource {
 
     companion object {
         private var container: GenericContainer<Nothing>? = null
+        private var enabled: Boolean = false
+        private var clean: Boolean = false
     }
 
     @Synchronized
     override fun beforeAll(context: ExtensionContext) {
+        val annotation = context.requiredTestClass.getAnnotation(RedisSettings::class.java)
+        enabled = annotation?.enabled ?: true
+        clean = annotation?.clean ?: true
+
         if (container == null) {
-            container = create()
+            container = createContainer()
 
             // Override application.yml
             System.setProperty("spring.cache.type", "redis")
@@ -34,13 +40,19 @@ class RedisExtension: BeforeAllCallback, AfterEachCallback, Store.CloseableResou
         }
     }
 
-    override fun afterEach(context: ExtensionContext) {
-        getSpringContext(context)
-            .flatMap(::getRedis)
-            .orElseGet(::createRedis)
-            .apply(::clean)
+    override fun afterAll(context: ExtensionContext) {
+        if (enabled && !clean) {
+            clean(context)
+        }
     }
 
+    override fun afterEach(context: ExtensionContext) {
+        if (enabled && clean) {
+            clean(context)
+        }
+    }
+
+    @Synchronized
     override fun close() {
         container?.stop()
         container = null
@@ -71,14 +83,18 @@ class RedisExtension: BeforeAllCallback, AfterEachCallback, Store.CloseableResou
         Optional.empty()
     }
 
-    private fun create(): GenericContainer<Nothing> = GenericContainer<Nothing>("redis:6.2.6")
+    private fun createContainer(): GenericContainer<Nothing> = GenericContainer<Nothing>("redis:6.2.6")
         .apply {
             withExposedPorts(6379)
             withReuse(true)
             start()
         }
 
-    private fun clean(redis: RedisTemplate<String, *>) {
+    private fun clean(context: ExtensionContext) {
+        val redis = getSpringContext(context)
+            .flatMap(::getRedis)
+            .orElseGet(::createRedis)
+
         redis.keys("*").forEach(redis::delete)
     }
 }

@@ -1,26 +1,37 @@
 package io.aesy.test.extension
 
 import org.flywaydb.core.Flyway
+import org.flywaydb.core.api.configuration.FluentConfiguration
 import org.junit.jupiter.api.extension.*
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace
 import org.junit.jupiter.api.extension.ExtensionContext.Store
+import org.springframework.beans.factory.NoSuchBeanDefinitionException
 import org.springframework.beans.factory.getBean
 import org.springframework.context.ApplicationContext
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.testcontainers.containers.MariaDBContainer
 import java.util.*
 
-class MariaDBExtension: BeforeAllCallback, BeforeEachCallback, AfterEachCallback, Store.CloseableResource {
+class MariaDBExtension:
+    BeforeAllCallback, BeforeEachCallback, AfterAllCallback, AfterEachCallback, Store.CloseableResource {
 
     companion object {
         private const val DATABASE_NAME = "yumme-test"
         private var container: MariaDBContainer<Nothing>? = null
+        private var enabled: Boolean = false
+        private var migrate: Boolean = false
+        private var clean: Boolean = false
     }
 
     @Synchronized
     override fun beforeAll(context: ExtensionContext) {
-        if (container == null) {
-            container = create()
+        val annotation = context.requiredTestClass.getAnnotation(MariaDBSettings::class.java)
+        enabled = annotation?.enabled ?: true
+        migrate = annotation?.migrate ?: true
+        clean = annotation?.clean ?: true
+
+        if (enabled && container == null) {
+            container = createContainer()
 
             // Override application.yml
             System.setProperty("spring.datasource.url", container!!.jdbcUrl)
@@ -30,19 +41,47 @@ class MariaDBExtension: BeforeAllCallback, BeforeEachCallback, AfterEachCallback
             // Register a callback for when the root test context is shut down
             context.root.getStore(Namespace.GLOBAL).put(MariaDBExtension::class.qualifiedName, this)
         }
+
+        if (enabled && migrate && !clean) {
+            migrate(context)
+        }
     }
 
     override fun beforeEach(context: ExtensionContext) {
-        getSpringContext(context).ifPresent(::migrate)
+        if (enabled && migrate && clean) {
+            migrate(context)
+        }
+    }
+
+    override fun afterAll(context: ExtensionContext) {
+        if (enabled && migrate && !clean) {
+            clean(context)
+        }
     }
 
     override fun afterEach(context: ExtensionContext) {
-        getSpringContext(context).ifPresent(::clean)
+        if (enabled && migrate && clean) {
+            clean(context)
+        }
     }
 
+    @Synchronized
     override fun close() {
         container?.stop()
         container = null
+    }
+
+    private fun getFlyway(context: ApplicationContext): Optional<Flyway> = try {
+        Optional.of(context.getBean())
+    } catch (e: NoSuchBeanDefinitionException) {
+        Optional.empty()
+    }
+
+    private fun createFlyway(): Flyway {
+        val configuration = FluentConfiguration()
+        configuration.dataSource(container!!.jdbcUrl, container!!.username, container!!.password)
+
+        return configuration.load()
     }
 
     private fun getSpringContext(context: ExtensionContext): Optional<ApplicationContext> = try {
@@ -51,7 +90,7 @@ class MariaDBExtension: BeforeAllCallback, BeforeEachCallback, AfterEachCallback
         Optional.empty()
     }
 
-    private fun create(): MariaDBContainer<Nothing> = MariaDBContainer<Nothing>("mariadb:10.6.7")
+    private fun createContainer(): MariaDBContainer<Nothing> = MariaDBContainer<Nothing>("mariadb:10.6.7")
         .apply {
             withDatabaseName(DATABASE_NAME)
             withUsername("test")
@@ -60,13 +99,17 @@ class MariaDBExtension: BeforeAllCallback, BeforeEachCallback, AfterEachCallback
             start()
         }
 
-    private fun clean(context: ApplicationContext) {
-        val flyway = context.getBean<Flyway>()
-        flyway.clean()
+    private fun clean(context: ExtensionContext) {
+        getSpringContext(context)
+            .flatMap(::getFlyway)
+            .orElseGet(::createFlyway)
+            .apply(Flyway::clean)
     }
 
-    private fun migrate(context: ApplicationContext) {
-        val flyway = context.getBean<Flyway>()
-        flyway.migrate()
+    private fun migrate(context: ExtensionContext) {
+        getSpringContext(context)
+            .flatMap(::getFlyway)
+            .orElseGet(::createFlyway)
+            .apply(Flyway::migrate)
     }
 }

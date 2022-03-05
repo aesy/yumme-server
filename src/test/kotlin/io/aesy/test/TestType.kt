@@ -1,7 +1,7 @@
 package io.aesy.test
 
-import io.aesy.test.extension.MariaDBExtension
-import io.aesy.test.extension.RedisExtension
+import io.aesy.test.extension.MariaDBSettings
+import io.aesy.test.extension.RedisSettings
 import io.mockk.junit5.MockKExtension
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.extension.ExtendWith
@@ -22,29 +22,29 @@ object TestType {
     annotation class Unit
 
     /**
-     * Marks/tags a test class as an integration test and starts a MariaDB container in docker for persistence
+     * Marks/tags a test class as an integration test using Spring
      */
     @Tag("IntegrationTest")
-    @ExtendWith(MariaDBExtension::class)
-    @ExtendWith(RedisExtension::class)
+    @SpringBootTest(webEnvironment = WebEnvironment.NONE)
     annotation class Integration
 
     /**
-     * Marks/tags a test class as an persistence + integration test, loads spring with the minimal
-     * set of classes required to test the persistence layer. A MariaDB container is started in docker.
+     * Marks/tags a test class as a persistence test which loads Spring with the minimal
+     * set of classes required to test the persistence layer, including a MariaDB database.
      */
     @Tag("PersistenceTest")
-    @Transactional(propagation = Propagation.NEVER)
+    @MariaDBSettings(clean = false) // No need to clean between JPA tests because all transactions are rolled back
     @DataJpaTest
+    @Transactional(propagation = Propagation.NEVER)
     @AutoConfigureTestDatabase(replace = Replace.NONE)
-    @Integration
     annotation class Persistence
 
     /**
      * Starts a full webserver for testing of rest endpoints
      */
     @Tag("RestApiTest")
+    @MariaDBSettings
+    @RedisSettings
     @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-    @Integration
     annotation class RestApi
 }

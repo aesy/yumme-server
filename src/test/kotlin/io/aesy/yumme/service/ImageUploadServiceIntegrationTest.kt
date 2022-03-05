@@ -2,6 +2,7 @@ package io.aesy.yumme.service
 
 import com.ninjasquad.springmockk.MockkBean
 import io.aesy.test.TestType
+import io.aesy.test.extension.MariaDBExtension
 import io.aesy.test.util.*
 import io.aesy.yumme.entity.RecipeHasImageUpload.Type
 import io.aesy.yumme.repository.ImageUploadRepository
@@ -9,24 +10,24 @@ import io.aesy.yumme.repository.RecipeHasImageUploadRepository
 import io.mockk.every
 import io.mockk.verify
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.DynamicPropertyRegistry
-import org.springframework.test.context.DynamicPropertySource
+import org.springframework.test.context.*
 import strikt.api.expectThat
 import strikt.java.isPresent
 import java.nio.file.Files
 import java.util.*
 import javax.imageio.ImageIO
 
-@TestType.Unit
-@SpringBootTest(
+@TestType.Integration
+@ExtendWith(MariaDBExtension::class)
+@ContextConfiguration(
     classes = [
         ImageUploadService::class,
         FileStorageService::class
     ]
 )
-class ImageUploadServiceUnitTest {
+class ImageUploadServiceIntegrationTest {
     @Autowired
     private lateinit var uploadService: ImageUploadService
 
