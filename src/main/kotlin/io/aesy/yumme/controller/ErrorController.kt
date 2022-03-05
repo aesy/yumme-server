@@ -18,10 +18,6 @@ import javax.servlet.http.HttpServletRequest
     produces = [MediaType.APPLICATION_JSON_VALUE]
 )
 class ErrorController: ErrorController {
-    override fun getErrorPath(): String? {
-        return null
-    }
-
     @Hidden
     @RequestMapping
     fun onError(request: HttpServletRequest): ErrorDto {

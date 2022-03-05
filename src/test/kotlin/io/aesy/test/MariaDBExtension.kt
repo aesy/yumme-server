@@ -2,7 +2,8 @@ package io.aesy.test
 
 import org.flywaydb.core.Flyway
 import org.junit.jupiter.api.extension.*
-import org.junit.jupiter.api.extension.ExtensionContext.*
+import org.junit.jupiter.api.extension.ExtensionContext.Namespace
+import org.junit.jupiter.api.extension.ExtensionContext.Store
 import org.springframework.beans.factory.getBean
 import org.springframework.context.ApplicationContext
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -49,7 +50,7 @@ class MariaDBExtension: BeforeAllCallback, BeforeEachCallback, AfterEachCallback
         Optional.empty()
     }
 
-    private fun create(): MariaDBContainer<Nothing> = MariaDBContainer<Nothing>("mariadb:10")
+    private fun create(): MariaDBContainer<Nothing> = MariaDBContainer<Nothing>("mariadb:10.6.7")
         .apply {
             withDatabaseName(DATABASE_NAME)
             withUsername("test")

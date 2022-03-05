@@ -11,8 +11,9 @@ buildscript {
 
 plugins {
     id "org.springframework.boot" version "$spring_boot_version"
+    id "io.spring.dependency-management" version "1.0.11.RELEASE"
+    id "org.springdoc.openapi-gradle-plugin" version "1.3.3"
     id "com.github.johnrengelman.processes" version "0.5.0"
-    id "org.springdoc.openapi-gradle-plugin" version "1.3.1"
     id "jacoco"
 }
 
@@ -20,8 +21,6 @@ apply plugin: "kotlin"
 apply plugin: "kotlin-noarg"
 apply plugin: "kotlin-jpa"
 apply plugin: "kotlin-spring"
-apply plugin: "org.springframework.boot"
-apply plugin: "io.spring.dependency-management"
 
 allOpen {
     annotation("javax.persistence.Entity")
@@ -35,18 +34,19 @@ noArg {
 
 group = "io.aesy.yumme"
 version = "0.0.1-SNAPSHOT"
+java.sourceCompatibility = JavaVersion.VERSION_17
 
 compileKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 }
 
 compileTestKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 }
 
@@ -65,31 +65,37 @@ configurations.all {
 dependencies {
     api group: "org.jetbrains.kotlin", name: "kotlin-stdlib-jdk8", version: "$kotlin_version"
     api group: "org.jetbrains.kotlin", name: "kotlin-reflect", version: "$kotlin_version"
-    annotationProcessor group: "org.springframework.boot", name: "spring-boot-configuration-processor", version: "$spring_boot_version"
-    implementation group: "org.springdoc", name: "springdoc-openapi-webmvc-core", version: "1.5.8"
-    implementation group: "org.springdoc", name: "springdoc-openapi-kotlin", version: "1.5.8"
-    implementation group: "org.springframework.boot", name: "spring-boot-starter-data-jpa", version: "$spring_boot_version"
-    implementation group: "org.springframework.boot", name: "spring-boot-starter-validation", version: "$spring_boot_version"
-    implementation group: "org.springframework.boot", name: "spring-boot-starter-web", version: "$spring_boot_version"
-    implementation group: "org.springframework.boot", name: "spring-boot-starter-cache", version: "$spring_boot_version"
-    implementation group: "org.springframework.boot", name: "spring-boot-actuator", version: "$spring_boot_version"
-    implementation group: "org.apache.shiro", name: "shiro-spring-boot-web-starter", version: "1.4.1"
+    annotationProcessor group: "org.springframework.boot", name: "spring-boot-configuration-processor"
+    implementation group: "org.springdoc", name: "springdoc-openapi-webmvc-core", version: "1.6.6"
+    implementation group: "org.springdoc", name: "springdoc-openapi-kotlin", version: "1.6.5"
+    implementation group: "org.springframework.boot", name: "spring-boot-starter-data-jpa"
+    implementation group: "org.springframework.boot", name: "spring-boot-starter-validation"
+    implementation group: "org.springframework.boot", name: "spring-boot-starter-web"
+    implementation group: "org.springframework.boot", name: "spring-boot-starter-cache"
+    implementation group: "org.springframework.boot", name: "spring-boot-actuator"
+    implementation group: "org.apache.shiro", name: "shiro-spring-boot-web-starter", version: "1.7.1"
     implementation group: "org.apache.httpcomponents", name: "httpclient", version: "4.5.13" // For PATCH support, see https://bugs.openjdk.java.net/browse/JDK-7016595
-    implementation group: "com.fasterxml.jackson.module", name: "jackson-module-kotlin", version: "2.9.9"
+    implementation group: "com.fasterxml.jackson.module", name: "jackson-module-kotlin", version: "2.13.1"
     implementation group: "at.favre.lib", name: "bcrypt", version: "0.9.0"
-    implementation group: "org.mariadb.jdbc", name: "mariadb-java-client", version: "2.1.0"
-    implementation group: "org.flywaydb", name: "flyway-core", version: "6.5.7"
-    implementation group: "com.auth0", name: "java-jwt", version: "3.8.2"
+    implementation group: "org.mariadb.jdbc", name: "mariadb-java-client", version: "2.7.3"
+    implementation group: "org.flywaydb", name: "flyway-core", version: "8.5.0"
+    implementation group: "org.flywaydb", name: "flyway-mysql", version: "8.4.3"
+    implementation group: "com.auth0", name: "java-jwt", version: "3.18.3"
 
-    testImplementation group: "org.springframework.boot", name: "spring-boot-starter-test", version: "$spring_boot_version"
-    testImplementation group: "org.junit.jupiter", name: "junit-jupiter", version: "5.6.0"
-    testImplementation group: "io.strikt", name: "strikt-core", version: "0.30.1"
-    testImplementation group: "io.strikt", name: "strikt-jvm", version: "0.30.1"
-    testImplementation group: "io.mockk", name: "mockk", version: "1.10.0"
-    testImplementation group: "com.ninja-squad", name: "springmockk", version: "1.1.3"
-    testImplementation group: "org.awaitility", name: "awaitility", version: "4.0.3"
-    testImplementation group: "org.testcontainers", name: "junit-jupiter", version: "1.15.2"
-    testImplementation group: "org.testcontainers", name: "mariadb", version: "1.15.2"
+    testImplementation group: "org.springframework.boot", name: "spring-boot-starter-test"
+    testImplementation group: "org.junit.jupiter", name: "junit-jupiter", version: "5.8.2"
+    testImplementation group: "io.strikt", name: "strikt-core", version: "0.33.0"
+    testImplementation group: "io.strikt", name: "strikt-jvm", version: "0.33.0"
+    testImplementation group: "io.mockk", name: "mockk", version: "1.12.2"
+    testImplementation group: "com.ninja-squad", name: "springmockk", version: "3.1.1"
+    testImplementation group: "org.awaitility", name: "awaitility", version: "4.1.1"
+    testImplementation group: "org.testcontainers", name: "junit-jupiter", version: "1.16.3"
+    testImplementation group: "org.testcontainers", name: "mariadb", version: "1.16.2"
+}
+
+jar {
+    // https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/#packaging-executable.and-plain-archives
+    enabled = false
 }
 
 openApi {
