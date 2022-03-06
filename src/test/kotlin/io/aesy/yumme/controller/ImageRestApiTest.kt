@@ -15,14 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.*
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.*
-import org.springframework.test.context.DynamicPropertyRegistry
-import org.springframework.test.context.DynamicPropertySource
 import org.springframework.util.LinkedMultiValueMap
 import strikt.api.expectCatching
 import strikt.api.expectThat
 import strikt.assertions.*
 import java.io.ByteArrayInputStream
-import java.nio.file.Files
 import java.util.concurrent.TimeUnit
 import javax.imageio.ImageIO
 
@@ -36,16 +33,6 @@ class ImageRestApiTest {
 
     @Autowired
     private lateinit var recipeService: RecipeService
-
-    companion object {
-        @DynamicPropertySource
-        @JvmStatic
-        fun dynamicProperties(registry: DynamicPropertyRegistry) {
-            registry.add("yumme.storage.directory") {
-                Files.createTempDirectory("YummeIntegrationTest").toString()
-            }
-        }
-    }
 
     @ParameterizedTest
     @ValueSource(strings = ["testData/large_image.png", "testData/large_image.jpg"])

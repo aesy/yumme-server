@@ -9,6 +9,7 @@ import io.aesy.yumme.image.BufferedImages.rescaleToCover
 import io.aesy.yumme.logging.Logging.getLogger
 import io.aesy.yumme.repository.ImageUploadRepository
 import io.aesy.yumme.repository.RecipeHasImageUploadRepository
+import io.aesy.yumme.storage.Storage
 import io.aesy.yumme.util.MD5
 import io.aesy.yumme.util.Slugs
 import org.springframework.cache.annotation.Cacheable
@@ -23,7 +24,7 @@ import kotlin.math.min
 
 @Service
 class ImageUploadService(
-    private val fileStorageService: FileStorageService,
+    private val storage: Storage,
     private val imageUploadRepository: ImageUploadRepository,
     private val recipeHasImageUploadRepository: RecipeHasImageUploadRepository
 ) {
@@ -50,7 +51,7 @@ class ImageUploadService(
         val mappings = recipeHasImageUploadRepository.findByRecipeAndName(recipe, name)
 
         for (mapping in mappings) {
-            fileStorageService.delete(mapping.upload.fileName)
+            storage.delete(mapping.upload.fileName)
             recipeHasImageUploadRepository.delete(mapping)
         }
 
@@ -95,7 +96,7 @@ class ImageUploadService(
         )
 
         recipeHasImageUploadRepository.save(mapping)
-        fileStorageService.write(fileName, bytes)
+        storage.write(fileName, bytes)
 
         return mapping
     }
@@ -119,7 +120,7 @@ class ImageUploadService(
                 val fileName = generateFileNameVariation(original, type)
                 val hash = MD5.hash(bytes)
 
-                fileStorageService.write(fileName, bytes)
+                storage.write(fileName, bytes)
 
                 val thumbnail = ImageUpload(
                     fileName = fileName,
@@ -147,19 +148,18 @@ class ImageUploadService(
     internal fun deleteOrphanedImages() {
         logger.debug("Checking for orphaned image uploads")
 
-        val paths = fileStorageService.getAllFilePaths()
+        val paths = storage.listFiles()
 
         for (path in paths) {
-            val fileName = path.fileName.toString()
-            val upload = imageUploadRepository.findByFileName(fileName)
+            val upload = imageUploadRepository.findByFileName(path)
 
             if (upload.isEmpty) {
-                logger.info("Deleting orphaned image upload '$fileName'")
+                logger.info("Deleting orphaned image upload '$path'")
 
-                val deleted = fileStorageService.delete(fileName)
+                val deleted = storage.delete(path)
 
                 if (!deleted) {
-                    logger.warn("Failed to delete orphaned image upload '$fileName': Image not found")
+                    logger.warn("Failed to delete orphaned image upload '$path': Image not found")
                 }
             }
         }
@@ -194,9 +194,8 @@ class ImageUploadService(
 
     @Throws(IOException::class)
     private fun ImageUpload.read(): BufferedImage {
-        val file = fileStorageService.read(fileName)
-
-        return ImageIO.read(file)
+        return storage.read(fileName)
+            .use(ImageIO::read)
     }
 
     @Throws(IOException::class)

@@ -7,7 +7,8 @@ yumme:
     password: ${ADMIN_PASSWORD:admin}
 
   storage:
-    directory: ${STORAGE_DIRECTORY:uploads/}
+    type: ${STORAGE_TYPE:file}
+    path: ${STORAGE_PATH:uploads/}
 
   security:
     pepper: ${PASSWORD_PEPPER:secret}
@@ -64,6 +65,14 @@ shiro:
   enabled: true
   web:
     enabled: true
+
+aws:
+  s3:
+    endpoint: ${AWS_S3_ENDPOINT:}
+    bucket: ${AWS_S3_BUCKET:}
+    access-key: ${AWS_S3_ACCESS_KEY:}
+    secret-key: ${AWS_S3_SECRET_KEY:}
+    region: ${AWS_S3_REGION:}
 
 springdoc:
   api-docs:

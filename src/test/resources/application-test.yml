@@ -1,0 +1,11 @@
+yumme:
+  registration:
+    enabled: true
+
+  storage:
+    type: memory
+    path: uploads/
+
+spring:
+  cache:
+    type: simple

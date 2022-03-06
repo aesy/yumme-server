@@ -3,6 +3,7 @@ package io.aesy.yumme.service
 import com.ninjasquad.springmockk.MockkBean
 import io.aesy.test.TestType
 import io.aesy.test.extension.MariaDBExtension
+import io.aesy.yumme.storage.InMemoryStorage
 import io.aesy.test.util.*
 import io.aesy.yumme.entity.RecipeHasImageUpload.Type
 import io.aesy.yumme.repository.ImageUploadRepository
@@ -12,10 +13,9 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.*
+import org.springframework.test.context.ContextConfiguration
 import strikt.api.expectThat
 import strikt.java.isPresent
-import java.nio.file.Files
 import java.util.*
 import javax.imageio.ImageIO
 
@@ -24,7 +24,7 @@ import javax.imageio.ImageIO
 @ContextConfiguration(
     classes = [
         ImageUploadService::class,
-        FileStorageService::class
+        InMemoryStorage::class
     ]
 )
 class ImageUploadServiceIntegrationTest {
@@ -36,16 +36,6 @@ class ImageUploadServiceIntegrationTest {
 
     @MockkBean
     private lateinit var recipeHasImageUploadRepository: RecipeHasImageUploadRepository
-
-    companion object {
-        @DynamicPropertySource
-        @JvmStatic
-        fun dynamicProperties(registry: DynamicPropertyRegistry) {
-            registry.add("yumme.storage.directory") {
-                Files.createTempDirectory("YummeIntegrationTest").toString()
-            }
-        }
-    }
 
     @Test
     fun `It should be possible to store an image and get the original back by name`() {

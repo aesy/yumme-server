@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 
@@ -26,6 +27,7 @@ object TestType {
      */
     @Tag("IntegrationTest")
     @SpringBootTest(webEnvironment = WebEnvironment.NONE)
+    @ActiveProfiles("test")
     annotation class Integration
 
     /**
@@ -37,6 +39,7 @@ object TestType {
     @DataJpaTest
     @Transactional(propagation = Propagation.NEVER)
     @AutoConfigureTestDatabase(replace = Replace.NONE)
+    @ActiveProfiles("test")
     annotation class Persistence
 
     /**
@@ -46,5 +49,6 @@ object TestType {
     @MariaDBSettings
     @RedisSettings
     @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+    @ActiveProfiles("test")
     annotation class RestApi
 }
