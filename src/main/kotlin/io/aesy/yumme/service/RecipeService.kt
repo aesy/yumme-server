@@ -2,8 +2,8 @@ package io.aesy.yumme.service
 
 import io.aesy.yumme.entity.Recipe
 import io.aesy.yumme.entity.User
+import io.aesy.yumme.logging.Logging.getLogger
 import io.aesy.yumme.repository.RecipeRepository
-import io.aesy.yumme.util.Logging.getLogger
 import org.springframework.cache.annotation.*
 import org.springframework.data.domain.*
 import org.springframework.data.domain.Sort.Direction

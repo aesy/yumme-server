@@ -6,9 +6,9 @@ import io.aesy.yumme.image.Alignment
 import io.aesy.yumme.image.BufferedImages.crop
 import io.aesy.yumme.image.BufferedImages.removeTransparency
 import io.aesy.yumme.image.BufferedImages.rescaleToCover
+import io.aesy.yumme.logging.Logging.getLogger
 import io.aesy.yumme.repository.ImageUploadRepository
 import io.aesy.yumme.repository.RecipeHasImageUploadRepository
-import io.aesy.yumme.util.Logging.getLogger
 import io.aesy.yumme.util.MD5
 import io.aesy.yumme.util.Slugs
 import org.springframework.cache.annotation.Cacheable

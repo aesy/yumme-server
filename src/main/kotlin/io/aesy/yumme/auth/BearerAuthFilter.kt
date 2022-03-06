@@ -1,6 +1,6 @@
 package io.aesy.yumme.auth
 
-import io.aesy.yumme.util.Logging.getLogger
+import io.aesy.yumme.logging.Logging.getLogger
 import org.apache.shiro.authc.AuthenticationToken
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter
 import org.apache.shiro.web.util.WebUtils

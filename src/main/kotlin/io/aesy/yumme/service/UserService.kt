@@ -1,11 +1,11 @@
 package io.aesy.yumme.service
 
-import io.aesy.yumme.auth.PasswordService
+ import io.aesy.yumme.auth.PasswordService
 import io.aesy.yumme.entity.Role
 import io.aesy.yumme.entity.User
 import io.aesy.yumme.exception.ResourceAlreadyExists
+import io.aesy.yumme.logging.Logging.getLogger
 import io.aesy.yumme.repository.UserRepository
-import io.aesy.yumme.util.Logging.getLogger
 import org.springframework.stereotype.Service
 import java.util.*
 import javax.annotation.PostConstruct

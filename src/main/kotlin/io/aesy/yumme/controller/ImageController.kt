@@ -6,10 +6,10 @@ import io.aesy.yumme.dto.ImageUploadDto
 import io.aesy.yumme.entity.RecipeHasImageUpload.Type
 import io.aesy.yumme.entity.User
 import io.aesy.yumme.exception.ResourceNotFound
+import io.aesy.yumme.logging.Logging.getLogger
 import io.aesy.yumme.service.ImageUploadService
 import io.aesy.yumme.service.RecipeService
 import io.aesy.yumme.util.AccessControl.canWrite
-import io.aesy.yumme.util.Logging.getLogger
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.shiro.authz.annotation.RequiresAuthentication
