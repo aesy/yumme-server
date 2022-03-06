@@ -6,7 +6,6 @@ import io.aesy.yumme.entity.RecipeHasImageUpload.Type
 import io.aesy.yumme.repository.RecipeHasImageUploadRepository
 import io.aesy.yumme.service.*
 import org.springframework.stereotype.Service
-import org.springframework.web.util.HtmlUtils
 
 @Service
 class RecipeMapper(
@@ -16,15 +15,15 @@ class RecipeMapper(
     private val recipeHasImageUploadRepository: RecipeHasImageUploadRepository
 ) {
     fun toEntity(request: CreateRecipeRequest, author: User): Recipe = Recipe(
-        title = request.title,
-        description = request.description,
-        directions = serializeDirections(request.directions),
-        prepTime = request.prepTime,
-        cookTime = request.cookTime,
-        yield = request.yield,
+        title = request.title!!,
+        description = request.description!!,
+        directions = request.directions!!,
+        prepTime = request.prepTime!!,
+        cookTime = request.cookTime!!,
+        yield = request.yield!!,
         author = author
     ).apply {
-        public = request.public
+        public = request.public!!
         categories = request.categories
             .mapNotNull { categoryService.getByName(it).orElse(null) }
             .toMutableSet()
@@ -38,15 +37,15 @@ class RecipeMapper(
 
     fun toEntity(request: CreateRecipeRequest, recipe: Recipe): Recipe = Recipe(
         id = recipe.id,
-        title = request.title,
-        description = request.description,
-        directions = serializeDirections(request.directions),
-        prepTime = request.prepTime,
-        cookTime = request.cookTime,
-        yield = request.yield,
+        title = request.title ?: recipe.title,
+        description = request.description ?: recipe.description,
+        directions = request.directions ?: recipe.directions,
+        prepTime = request.prepTime ?: recipe.prepTime,
+        cookTime = request.cookTime ?: recipe.cookTime,
+        yield = request.yield ?: recipe.yield,
         author = recipe.author
     ).apply {
-        public = request.public
+        public = request.public ?: recipe.public
         categories = request.categories
             .mapNotNull { name ->
                 recipe.categories.find { it.name == name }
@@ -72,9 +71,7 @@ class RecipeMapper(
         id = recipe.id,
         title = request.title ?: recipe.title,
         description = request.description ?: recipe.description,
-        directions = request.directions
-            ?.run(::serializeDirections)
-            ?: recipe.directions,
+        directions = request.directions ?: recipe.directions,
         prepTime = request.prepTime ?: recipe.prepTime,
         cookTime = request.cookTime ?: recipe.cookTime,
         yield = request.yield ?: recipe.yield,
@@ -109,7 +106,7 @@ class RecipeMapper(
         id = recipe.id,
         title = recipe.title,
         description = recipe.description,
-        directions = deserializeDirections(recipe.directions),
+        directions = recipe.directions,
         prepTime = recipe.prepTime,
         cookTime = recipe.cookTime,
         yield = recipe.yield,
@@ -128,19 +125,4 @@ class RecipeMapper(
             .map { "$it.png" }
             .toMutableSet()
     )
-
-    fun serializeDirections(directions: List<String>): String = directions
-        .joinToString(
-            "</section><section>",
-            "<section>",
-            "</section>",
-            transform = HtmlUtils::htmlEscape
-        )
-
-    fun deserializeDirections(directions: String): MutableList<String> = directions
-        .removePrefix("<section>")
-        .removeSuffix("</section>")
-        .split("</section><section>")
-        .map(HtmlUtils::htmlUnescape)
-        .toMutableList()
 }

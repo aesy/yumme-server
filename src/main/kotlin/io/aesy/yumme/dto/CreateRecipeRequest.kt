@@ -24,7 +24,7 @@ class CreateRecipeRequest(
     var description: String?,
     @field:NotEmpty
     @field:JsonProperty("directions")
-    var directions: MutableList<String>,
+    var directions: String?,
     @field:NotNull
     @field:JsonProperty("public")
     var public: Boolean?,

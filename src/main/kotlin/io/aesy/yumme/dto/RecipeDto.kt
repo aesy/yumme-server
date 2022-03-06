@@ -19,7 +19,7 @@ class RecipeDto(
     var description: String?,
 
     @JsonProperty
-    var directions: MutableList<String> = mutableListOf(),
+    var directions: String?,
 
     @JsonProperty
     var rating: RatingSummaryDto?,

@@ -40,7 +40,7 @@ class UpdateRecipeRequest(
     @field:JsonProperty("yield")
     var yield: Int? = null,
     @field:JsonProperty("directions")
-    var directions: MutableList<String>?,
+    var directions: String?,
     @field:JsonProperty("tags")
     var tags: MutableSet<String>?,
     @field:JsonProperty("categories")

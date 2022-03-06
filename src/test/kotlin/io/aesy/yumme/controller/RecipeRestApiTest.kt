@@ -143,18 +143,18 @@ class RecipeRestApiTest {
     @Test
     fun `It should be possible to create a new recipe`() {
         val author = userService.createUser("test@test.com", "woop", "secret")
-        categoryService.save(Category(name = "abc"))
+        val category = categoryService.save(Category(name = "category"))
         val request = CreateRecipeRequest(
-            "woop",
-            "woop",
-            mutableListOf("woop"),
+            "title",
+            "description",
+            "directions",
             true,
             Duration.ofHours(1),
             Duration.ofHours(2),
             3
         ).apply {
-            categories = mutableSetOf("abc")
-            tags = mutableSetOf("def")
+            categories = mutableSetOf(category.name)
+            tags = mutableSetOf("tag")
         }
 
         val response = restTemplate.withBasicAuth(author.userName, "secret")
@@ -171,18 +171,18 @@ class RecipeRestApiTest {
     @Test
     fun `It should not be possible to create a new recipe with a 'negative' duration`() {
         val author = userService.createUser("test@test.com", "woop", "secret")
-        categoryService.save(Category(name = "abc"))
+        val category = categoryService.save(Category(name = "category"))
         val request = CreateRecipeRequest(
-            "woop",
-            "woop",
-            mutableListOf("woop"),
+            "title",
+            "description",
+            "directions",
             true,
             Duration.ofHours(-1),
             Duration.ofHours(-2),
             3
         ).apply {
-            categories = mutableSetOf("abc")
-            tags = mutableSetOf("def")
+            categories = mutableSetOf(category.name)
+            tags = mutableSetOf("tag")
         }
 
         val response = restTemplate.withBasicAuth(author.userName, "secret")
@@ -195,18 +195,18 @@ class RecipeRestApiTest {
     @ValueSource(ints = [-1, 0])
     fun `It should not be possible to create a new recipe with a yield of zero or less`(yield: Int) {
         val author = userService.createUser("test@test.com", "woop", "secret")
-        categoryService.save(Category(name = "abc"))
+        val category = categoryService.save(Category(name = "category"))
         val request = CreateRecipeRequest(
-            "woop",
-            "woop",
-            mutableListOf("woop"),
+            "title",
+            "description",
+            "directions",
             true,
             Duration.ofHours(1),
             Duration.ofHours(2),
             `yield`
         ).apply {
-            categories = mutableSetOf("abc")
-            tags = mutableSetOf("def")
+            categories = mutableSetOf(category.name)
+            tags = mutableSetOf("tag")
         }
 
         val response = restTemplate.withBasicAuth(author.userName, "secret")
@@ -235,9 +235,9 @@ class RecipeRestApiTest {
         recipeService.save(recipe)
 
         val request = CreateRecipeRequest(
-            "wawawa",
-            "wawawa",
-            mutableListOf("woop"),
+            "title",
+            "description",
+            "directions",
             true,
             Duration.ofHours(1),
             Duration.ofHours(2),
@@ -288,9 +288,9 @@ class RecipeRestApiTest {
         ratingService.rateAsUser(author, recipe, 5)
 
         val request = CreateRecipeRequest(
-            "wawawa",
-            "wawawa",
-            mutableListOf("woop"),
+            "title",
+            "description",
+            "directions",
             true,
             Duration.ofHours(1),
             Duration.ofHours(2),
@@ -314,9 +314,9 @@ class RecipeRestApiTest {
         recipeHasUploadRepository.save(createOriginalMapping(upload, recipe))
 
         val request = CreateRecipeRequest(
-            "wawawa",
-            "wawawa",
-            mutableListOf("woop"),
+            "title",
+            "description",
+            "directions",
             true,
             Duration.ofHours(1),
             Duration.ofHours(2),
@@ -352,13 +352,13 @@ class RecipeRestApiTest {
         recipeService.save(recipe)
 
         val request = UpdateRecipeRequest(
-            "wawawa",
-            "wawawa",
+            "title",
+            "description",
             true,
             Duration.ofHours(1),
             Duration.ofHours(2),
             3,
-            mutableListOf("woop"),
+            "directions",
             mutableSetOf("keep", "add"),
             mutableSetOf("keep"),
             mutableSetOf("keep", "add")
