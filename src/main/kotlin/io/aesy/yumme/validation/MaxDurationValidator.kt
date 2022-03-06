@@ -13,7 +13,7 @@ class MaxDurationValidator: ConstraintValidator<MaxDuration, Duration> {
         this.message = annotation.message
 
         if (message == "") {
-            message = "Duration must be no more than ${annotation.amount} ${annotation.unit.name.toLowerCase()}"
+            message = "Duration must be no more than ${annotation.amount} ${annotation.unit.name.lowercase()}"
         }
 
         return super.initialize(annotation)

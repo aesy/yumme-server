@@ -33,7 +33,7 @@ class BearerAuthFilter: AuthenticatingFilter() {
         var authcRequired = methods.isEmpty()
 
         for (method in methods) {
-            if (httpMethod.toUpperCase(Locale.ENGLISH) == method) {
+            if (httpMethod.uppercase(Locale.ENGLISH) == method) {
                 authcRequired = true
                 break
             }
@@ -52,7 +52,7 @@ class BearerAuthFilter: AuthenticatingFilter() {
         if (options != null) {
             for (option in options) {
                 if (!option.equals(PERMISSIVE, ignoreCase = true)) {
-                    methods.add(option.toUpperCase(Locale.ENGLISH))
+                    methods.add(option.uppercase(Locale.ENGLISH))
                 }
             }
         }
@@ -94,13 +94,13 @@ class BearerAuthFilter: AuthenticatingFilter() {
     }
 
     protected fun isLoginAttempt(authzHeader: String?): Boolean {
-        val authzScheme = AUTHZ_SCHEME.toLowerCase(Locale.ENGLISH)
+        val authzScheme = AUTHZ_SCHEME.lowercase(Locale.ENGLISH)
 
         if (authzHeader == null) {
             return false
         }
 
-        return authzHeader.toLowerCase(Locale.ENGLISH)
+        return authzHeader.lowercase(Locale.ENGLISH)
             .startsWith(authzScheme)
     }
 
@@ -132,7 +132,7 @@ class BearerAuthFilter: AuthenticatingFilter() {
     }
 
     protected fun getToken(authzHeader: String, request: ServletRequest): String {
-        val authzScheme = AUTHZ_SCHEME.toLowerCase(Locale.ENGLISH)
+        val authzScheme = AUTHZ_SCHEME.lowercase(Locale.ENGLISH)
 
         return authzHeader
             .substring(authzScheme.length)
