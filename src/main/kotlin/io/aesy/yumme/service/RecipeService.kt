@@ -93,17 +93,6 @@ class RecipeService(
     }
 
     @Transactional
-    fun getPublicByAuthor(author: User, limit: Int = 0, offset: Int = 0): List<Recipe> {
-        val page = if (limit > 0) {
-            PageRequest.of(offset, limit)
-        } else {
-            Pageable.unpaged()
-        }
-
-        return recipeRepository.findAllPublicByAuthor(author, page)
-    }
-
-    @Transactional
     fun save(recipe: Recipe): Recipe {
         return recipeRepository.save(recipe)
     }

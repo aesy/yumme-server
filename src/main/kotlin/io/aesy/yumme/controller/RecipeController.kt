@@ -137,29 +137,20 @@ class RecipeController(
     fun listRecipes(
         @AuthorizedUser user: User,
         @RequestParam(required = false, defaultValue = "0") offset: Int,
-        @RequestParam(required = false, defaultValue = "10") limit: Int,
-        @RequestParam("user", required = false) userId: Long?
+        @RequestParam(required = false, defaultValue = "10") limit: Int
     ): List<RecipeDto> {
         val maxLimit = 100
-        val author = if (userId == null) {
-            user
-        } else {
-            userService.getById(userId)
-                .orElseThrow { ResourceNotFound.user(userId) }
-        }
 
-        return if (userId == null) {
-            recipeService.getByAuthor(author, min(limit, maxLimit), offset)
-        } else {
-            recipeService.getPublicByAuthor(author, min(limit, maxLimit), offset)
-        }.map(mapper::toDto)
+        return recipeService
+            .getByAuthor(user, min(limit, maxLimit), offset)
+            .map(mapper::toDto)
     }
 
     @RequiresAuthentication
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     @Transactional
-    fun inspectRecipeById(
+    fun inspectRecipe(
         @AuthorizedUser user: User,
         @PathVariable("id") id: Long,
     ): RecipeDto {
@@ -226,7 +217,7 @@ class RecipeController(
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    fun deleteRecipeById(
+    fun deleteRecipe(
         @AuthorizedUser user: User,
         @PathVariable("id") id: Long
     ) {
