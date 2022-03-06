@@ -28,34 +28,50 @@ class RecipeService(
 
     @Cacheable("recent-recipes")
     @Transactional
-    fun getRecent(count: Int): List<Recipe> {
+    fun getRecent(limit: Int = 0, offset: Int = 0): List<Recipe> {
         val sort = Sort.by(Direction.DESC, Recipe::createdAt.name, Recipe::id.name)
-        val page = PageRequest.of(0, count, sort)
+        val page = if (limit > 0) {
+            PageRequest.of(offset, limit, sort)
+        } else {
+            Pageable.unpaged()
+        }
 
         return recipeRepository.findAllPublic(page)
     }
 
     @Transactional
-    fun getRecentByUser(user: User, count: Int): List<Recipe> {
+    fun getRecentByUser(user: User, limit: Int = 0, offset: Int = 0): List<Recipe> {
         val sort = Sort.by(Direction.DESC, Recipe::createdAt.name, Recipe::id.name)
-        val page = PageRequest.of(0, count, sort)
+        val page = if (limit > 0) {
+            PageRequest.of(offset, limit, sort)
+        } else {
+            Pageable.unpaged()
+        }
 
         return recipeRepository.findAllPublicByAuthor(user, page)
     }
 
     @Cacheable("popular-recipes")
     @Transactional
-    fun getPopular(count: Int): List<Recipe> {
+    fun getPopular(limit: Int = 0, offset: Int = 0): List<Recipe> {
         val sort = Sort.by(Direction.DESC, Recipe::createdAt.name, Recipe::id.name) // TODO use popularity
-        val page = PageRequest.of(0, count, sort)
+        val page = if (limit > 0) {
+            PageRequest.of(offset, limit, sort)
+        } else {
+            Pageable.unpaged()
+        }
 
         return recipeRepository.findAllPublic(page)
     }
 
     @Transactional
-    fun getPopularByUser(user: User, count: Int): List<Recipe> {
+    fun getPopularByUser(user: User, limit: Int = 0, offset: Int = 0): List<Recipe> {
         val sort = Sort.by(Direction.DESC, Recipe::createdAt.name, Recipe::id.name) // TODO use popularity
-        val page = PageRequest.of(0, count, sort)
+        val page = if (limit > 0) {
+            PageRequest.of(offset, limit, sort)
+        } else {
+            Pageable.unpaged()
+        }
 
         return recipeRepository.findAllPublicByAuthor(user, page)
     }

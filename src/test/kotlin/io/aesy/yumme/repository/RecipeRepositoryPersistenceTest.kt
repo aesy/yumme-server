@@ -7,6 +7,7 @@ import io.aesy.yumme.entity.*
 import io.aesy.yumme.repository.matcher.RecipeMatcher
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
 import strikt.api.expectThat
 import strikt.assertions.*
 import java.time.Duration
@@ -64,6 +65,27 @@ class RecipeRepositoryPersistenceTest {
         val recipes = recipeRepository.findAllPublic()
 
         expectThat(recipes).hasSize(1)
+    }
+
+    @Test
+    fun `It should be possible to fetch all public recipes in pages`() {
+        val author1 = userRepository.save(Users.random())
+        val author2 = userRepository.save(Users.random())
+        val recipe1 = Recipes.random(author1)
+        recipe1.public = true
+        recipeRepository.save(recipe1)
+        val recipe2 = Recipes.random(author1)
+        recipe2.public = false
+        recipeRepository.save(recipe2)
+        val recipe3 = Recipes.random(author2)
+        recipe3.public = true
+        recipeRepository.save(recipe3)
+
+        val result = recipeRepository.findAllPublic(PageRequest.of(0, 3))
+
+        expectThat(result)
+            .map(Recipe::id)
+            .containsExactlyInAnyOrder(recipe1.id, recipe3.id)
     }
 
     @Test

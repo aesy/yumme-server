@@ -86,6 +86,7 @@ class RecipeController(
     @Transactional
     fun listRecentRecipes(
         @AuthorizedUser user: User,
+        @RequestParam(required = false, defaultValue = "0") offset: Int,
         @RequestParam(required = false, defaultValue = "10") limit: Int,
         @RequestParam("user", required = false) userId: Long?
     ): List<RecipeDto> {
@@ -98,9 +99,9 @@ class RecipeController(
         }
 
         return if (userId == null) {
-            recipeService.getRecent(min(limit, maxLimit))
+            recipeService.getRecent(min(limit, maxLimit), offset)
         } else {
-            recipeService.getRecentByUser(author, min(limit, maxLimit))
+            recipeService.getRecentByUser(author, min(limit, maxLimit), offset)
         }.map(mapper::toDto)
     }
 
@@ -110,6 +111,7 @@ class RecipeController(
     @Transactional
     fun listPopularRecipes(
         @AuthorizedUser user: User,
+        @RequestParam(required = false, defaultValue = "0") offset: Int,
         @RequestParam(required = false, defaultValue = "10") limit: Int,
         @RequestParam("user", required = false) userId: Long?
     ): List<RecipeDto> {
@@ -122,9 +124,9 @@ class RecipeController(
         }
 
         return if (userId == null) {
-            recipeService.getPopular(min(limit, maxLimit))
+            recipeService.getPopular(min(limit, maxLimit), offset)
         } else {
-            recipeService.getPopularByUser(author, min(limit, maxLimit))
+            recipeService.getPopularByUser(author, min(limit, maxLimit), offset)
         }.map(mapper::toDto)
     }
 
@@ -132,7 +134,7 @@ class RecipeController(
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @Transactional
-    fun listRecipesByUser(
+    fun listRecipes(
         @AuthorizedUser user: User,
         @RequestParam(required = false, defaultValue = "0") offset: Int,
         @RequestParam(required = false, defaultValue = "10") limit: Int,
