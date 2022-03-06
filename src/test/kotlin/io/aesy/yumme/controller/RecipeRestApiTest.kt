@@ -467,6 +467,53 @@ class RecipeRestApiTest {
         }.isSuccess()
     }
 
+    @Test
+    fun `It should be possible to search for a recipe by name`() {
+        val author = userService.createUser("test@test.com", "woop", "secret")
+        val recipe1 = Recipes.random(author)
+        recipe1.title = "wawawa"
+        recipe1.public = true
+        recipeService.save(recipe1)
+        val recipe2 = Recipes.random(author)
+        recipe2.public = true
+        recipe2.title = "wawa"
+        recipeService.save(recipe2)
+        val recipe3 = Recipes.random(author)
+        recipe3.public = true
+        recipe3.title = "woop"
+        recipeService.save(recipe3)
+
+        val response = restTemplate.withBasicAuth(author.userName, "secret")
+            .getList<RecipeDto>("/recipe/search?q=wawa")
+
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
+        expectThat(response.body)
+            .isNotNull()
+            .map(RecipeDto::id)
+            .containsExactlyInAnyOrder(recipe1.id, recipe2.id)
+    }
+
+    @Test
+    fun `It should be possible to search for a recipe by author`() {
+        val author1 = userService.createUser("test1@test.com", "woop1", "secret")
+        val author2 = userService.createUser("test2@test.com", "woop2", "secret")
+        val recipe1 = Recipes.random(author1)
+        recipe1.public = true
+        recipeService.save(recipe1)
+        val recipe2 = Recipes.random(author2)
+        recipe2.public = true
+        recipeService.save(recipe2)
+
+        val response = restTemplate.withBasicAuth(author1.userName, "secret")
+            .getList<RecipeDto>("/recipe/search?author=${author1.id}")
+
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
+        expectThat(response.body)
+            .isNotNull()
+            .map(RecipeDto::id)
+            .containsExactly(recipe1.id)
+    }
+
     private fun createUpload(): ImageUpload {
         return ImageUpload(
             fileName = Strings.random(30),

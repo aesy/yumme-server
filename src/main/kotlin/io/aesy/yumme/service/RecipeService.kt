@@ -4,6 +4,7 @@ import io.aesy.yumme.entity.Recipe
 import io.aesy.yumme.entity.User
 import io.aesy.yumme.logging.Logging.getLogger
 import io.aesy.yumme.repository.RecipeRepository
+import org.springframework.beans.factory.ObjectProvider
 import org.springframework.cache.annotation.*
 import org.springframework.data.domain.*
 import org.springframework.data.domain.Sort.Direction
@@ -14,10 +15,15 @@ import javax.transaction.Transactional
 
 @Service
 class RecipeService(
-    private val recipeRepository: RecipeRepository
+    private val recipeRepository: RecipeRepository,
+    private val queryBuilderProvider: ObjectProvider<RecipeQueryBuilder>
 ) {
     companion object {
         private val logger = getLogger()
+    }
+
+    fun query(): RecipeQueryBuilder {
+        return queryBuilderProvider.getObject()
     }
 
     @Cacheable("recent-recipes")

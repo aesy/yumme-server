@@ -17,36 +17,36 @@ class CreateRecipeRequest(
     @field:NotEmpty
     @field:Length(max = 128)
     @field:JsonProperty("title")
-    var title: String,
+    var title: String?,
     @field:NotEmpty
     @field:Length(max = 512)
     @field:JsonProperty("description")
-    var description: String,
+    var description: String?,
     @field:NotEmpty
     @field:JsonProperty("directions")
     var directions: MutableList<String>,
     @field:NotNull
     @field:JsonProperty("public")
-    var public: Boolean,
+    var public: Boolean?,
     @field:NotNull
     @field:MaxDuration(1, ChronoUnit.DAYS)
     @field:MinDuration(0, ChronoUnit.SECONDS)
     @field:JsonProperty("prep_time")
     @field:JsonSerialize(converter = DurationLongSecondsJacksonConverter::class)
     @field:JsonDeserialize(converter = LongSecondsDurationJacksonConverter::class)
-    var prepTime: Duration,
+    var prepTime: Duration?,
     @field:NotNull
     @field:MaxDuration(1, ChronoUnit.DAYS)
     @field:MinDuration(0, ChronoUnit.SECONDS)
     @field:JsonProperty("cook_time")
     @field:JsonSerialize(converter = DurationLongSecondsJacksonConverter::class)
     @field:JsonDeserialize(converter = LongSecondsDurationJacksonConverter::class)
-    var cookTime: Duration,
+    var cookTime: Duration?,
     @field:NotNull
     @field:Max(100)
     @field:Min(1)
     @field:JsonProperty("yield")
-    var yield: Int,
+    var yield: Int?,
 ) {
     @field:JsonProperty("tags")
     var tags: MutableSet<String> = mutableSetOf()

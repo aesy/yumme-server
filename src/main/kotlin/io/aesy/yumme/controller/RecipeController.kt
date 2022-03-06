@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import java.time.Duration
+import java.time.Instant
 import javax.transaction.Transactional
 import javax.validation.Valid
 import kotlin.math.min
@@ -32,6 +34,52 @@ class RecipeController(
     private val userService: UserService,
     private val mapper: RecipeMapper
 ) {
+    @RequiresAuthentication
+    @GetMapping("/search")
+    @ResponseStatus(HttpStatus.OK)
+    @Transactional
+    fun searchRecipes(
+        @RequestParam(required = false, defaultValue = "0") offset: Int,
+        @RequestParam(required = false, defaultValue = "10") limit: Int,
+        @RequestParam("author", required = false) authorId: Long?,
+        @RequestParam("q", required = false) q: String?,
+        @RequestParam("min-prep-time", required = false) minPrepTime: Duration?,
+        @RequestParam("max-prep-time", required = false) maxPrepTime: Duration?,
+        @RequestParam("min-cook-time", required = false) minCookTime: Duration?,
+        @RequestParam("max-cook-time", required = false) maxCookTime: Duration?,
+        @RequestParam("created-before", required = false) createdBefore: Instant?,
+        @RequestParam("created-after", required = false) createdAfter: Instant?,
+        @RequestParam("include-ingredient", required = false) includeIngredients: List<Long>?,
+        @RequestParam("exclude-ingredient", required = false) excludeIngredients: List<Long>?,
+        @RequestParam("include-tag", required = false) includeTag: List<Long>?,
+        @RequestParam("exclude-tag", required = false) excludeTag: List<Long>?,
+        @RequestParam("include-category", required = false) includeCategories: List<Long>?,
+        @RequestParam("exclude-category", required = false) excludeCategories: List<Long>?
+    ): List<RecipeDto> {
+        val maxLimit = 100
+        val query = recipeService.query()
+
+        authorId?.apply(query::byAuthor)
+        q?.apply(query::freetext)
+        minPrepTime?.apply(query::withMinPrepTime)
+        maxPrepTime?.apply(query::withMaxPrepTime)
+        minCookTime?.apply(query::withMinCookTime)
+        maxCookTime?.apply(query::withMaxCookTime)
+        createdBefore?.apply(query::isCreatedBefore)
+        createdAfter?.apply(query::isCreatedAfter)
+        includeIngredients?.apply(query::includingIngredients)
+        excludeIngredients?.apply(query::notIncludingIngredients)
+        includeTag?.apply(query::withTags)
+        excludeTag?.apply(query::withoutTags)
+        includeCategories?.apply(query::inCategories)
+        excludeCategories?.apply(query::notInCategories)
+
+        return query
+            .public(true)
+            .search(min(limit, maxLimit), offset)
+            .map(mapper::toDto)
+    }
+
     @RequiresAuthentication
     @GetMapping("/recent")
     @ResponseStatus(HttpStatus.OK)

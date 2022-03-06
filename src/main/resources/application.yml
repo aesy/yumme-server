@@ -47,6 +47,8 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
         ddl-auto: validate
+        jdbc:
+          time_zone: UTC
 
   flyway:
     enabled: true

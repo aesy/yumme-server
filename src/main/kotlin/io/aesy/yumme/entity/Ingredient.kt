@@ -22,7 +22,7 @@ class Ingredient(
         joinColumns = [JoinColumn(name = "ingredient")],
         inverseJoinColumns = [JoinColumn(name = "recipe")]
     )
-    val recipe: Set<Recipe> = setOf()
+    val recipes: Set<Recipe> = setOf()
 ) {
     override fun toString(): String {
         return "Ingredient(id=$id, name='$name')"
