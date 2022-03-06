@@ -55,10 +55,10 @@ class ImageController(
     ): ResponseEntity<BufferedImage> {
         val type = size.toType()
         val recipe = recipeService.getById(id)
-            .orElseThrow { ResourceNotFound() }
+            .orElseThrow { ResourceNotFound.recipe(id) }
         val response = ResponseEntity.ok()
         val upload = imageUploadService.getUpload(recipe, name, type)
-            .orElseThrow { ResourceNotFound() }
+            .orElseThrow { ResourceNotFound.imageUpload(name) }
         val image = imageUploadService.readImage(upload)
 
         image.ifPresent {
@@ -93,7 +93,7 @@ class ImageController(
     ): ImageUploadDto {
         val recipe = recipeService.getById(id)
             .filter { user.canWrite(it) }
-            .orElseThrow { ResourceNotFound() }
+            .orElseThrow { ResourceNotFound.recipe(id) }
 
         val image = try {
             ImageIO.read(file.inputStream)
@@ -132,12 +132,12 @@ class ImageController(
     ) {
         val recipe = recipeService.getById(id)
             .filter { user.canWrite(it) }
-            .orElseThrow { ResourceNotFound() }
+            .orElseThrow { ResourceNotFound.recipe(id) }
 
         val deleted = imageUploadService.deleteUpload(recipe, name)
 
         if (!deleted) {
-            throw ResourceNotFound()
+            logger.warn("Was requested to delete image '$name', but it doesn't exist")
         }
     }
 

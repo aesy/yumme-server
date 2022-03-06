@@ -39,7 +39,7 @@ class RatingController(
     ): RatingSummaryDto {
         val recipe = recipeService.getById(id)
             .filter { user.canRead(it) }
-            .orElseThrow { ResourceNotFound() }
+            .orElseThrow { ResourceNotFound.recipe(id) }
 
         return ratingService.getRatingSummary(recipe)
     }
@@ -54,7 +54,7 @@ class RatingController(
     ) {
         val recipe = recipeService.getById(id)
             .filter { it.public or user.isAuthor(it) }
-            .orElseThrow { ResourceNotFound() }
+            .orElseThrow { ResourceNotFound.recipe(id) }
 
         ratingService.rateAsUser(user, recipe, score)
     }

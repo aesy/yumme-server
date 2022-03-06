@@ -6,9 +6,9 @@ import io.aesy.yumme.entity.Role
 import io.aesy.yumme.entity.User
 import io.aesy.yumme.exception.ResourceNotFound
 import io.aesy.yumme.mapper.TagMapper
-import io.aesy.yumme.util.AccessControl.canRead
 import io.aesy.yumme.service.RecipeService
 import io.aesy.yumme.service.TagService
+import io.aesy.yumme.util.AccessControl.canRead
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.apache.shiro.authz.annotation.RequiresAuthentication
 import org.apache.shiro.authz.annotation.RequiresRoles
@@ -58,7 +58,7 @@ class TagController(
 
         val recipe = recipeService.getById(id)
             .filter { user.canRead(it) }
-            .orElseThrow { ResourceNotFound() }
+            .orElseThrow { ResourceNotFound.recipe(id) }
 
         return tagService.getAllByRecipe(recipe, min(limit, maxLimit), offset)
             .map(mapper::toDto)

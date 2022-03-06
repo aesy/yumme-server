@@ -2,13 +2,15 @@ package io.aesy.yumme.controller
 
 import io.aesy.yumme.auth.AuthorizedUser
 import io.aesy.yumme.dto.RoleDto
-import io.aesy.yumme.entity.*
+import io.aesy.yumme.entity.Role
+import io.aesy.yumme.entity.User
 import io.aesy.yumme.exception.ResourceNotFound
 import io.aesy.yumme.mapper.RoleMapper
 import io.aesy.yumme.service.RoleService
 import io.aesy.yumme.service.UserService
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.apache.shiro.authz.annotation.*
+import org.apache.shiro.authz.annotation.RequiresAuthentication
+import org.apache.shiro.authz.annotation.RequiresRoles
 import org.springframework.http.MediaType
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -50,7 +52,7 @@ class RoleController(
         @PathVariable("id") id: Long
     ): List<RoleDto> {
         val user = userService.getById(id)
-            .orElseThrow { ResourceNotFound() }
+            .orElseThrow { ResourceNotFound.user(id) }
 
         return roleService.getAllByUser(user)
             .map(mapper::toDto)

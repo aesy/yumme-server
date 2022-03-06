@@ -1,9 +1,10 @@
 package io.aesy.yumme.controller
 
 import io.aesy.yumme.auth.AuthorizedUser
-import io.aesy.yumme.dto.*
-import io.aesy.yumme.entity.*
+import io.aesy.yumme.dto.CollectionDto
+import io.aesy.yumme.dto.UpdateCollectionRequest
 import io.aesy.yumme.entity.Collection
+import io.aesy.yumme.entity.User
 import io.aesy.yumme.exception.ResourceNotFound
 import io.aesy.yumme.mapper.CollectionMapper
 import io.aesy.yumme.service.CollectionService
@@ -16,7 +17,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.server.ResponseStatusException
 import javax.transaction.Transactional
 import javax.validation.Valid
 import kotlin.math.min
@@ -59,9 +59,11 @@ class CollectionController(
         val collection = collectionService.save(Collection(title = request.title!!, owner = user))
 
         request.recipes
-            .map(recipeService::getById)
-            .map { recipe -> recipe.filter { user.canRead(it) } }
-            .map { it.orElseThrow { ResponseStatusException(HttpStatus.BAD_REQUEST, "Recipe with id $it not found") } }
+            .map {
+                recipeService.getById(it)
+                    .orElseThrow { ResourceNotFound.recipe(it) }
+            }
+            .filter { user.canRead(it) }
             .apply(collection.recipes::addAll)
 
         collectionService.save(collection)
@@ -80,15 +82,17 @@ class CollectionController(
     ): CollectionDto {
         val collection = collectionService.getById(id)
             .filter { user.canWrite(it) }
-            .orElseThrow { ResourceNotFound() }
+            .orElseThrow { ResourceNotFound.collection(id) }
 
         collection.title = request.title!!
         collection.recipes.clear()
 
         request.recipes
-            .map(recipeService::getById)
-            .map { recipe -> recipe.filter { user.canRead(it) } }
-            .map { it.orElseThrow { ResponseStatusException(HttpStatus.BAD_REQUEST, "Recipe with id $it not found") } }
+            .map {
+                recipeService.getById(it)
+                    .orElseThrow { ResourceNotFound.recipe(it) }
+            }
+            .filter { user.canRead(it) }
             .apply(collection.recipes::addAll)
 
         collectionService.save(collection)

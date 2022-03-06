@@ -46,7 +46,7 @@ class RecipeController(
             user
         } else {
             userService.getById(userId)
-                .orElseThrow { ResourceNotFound() }
+                .orElseThrow { ResourceNotFound.user(userId) }
         }
 
         return if (userId == null) {
@@ -70,7 +70,7 @@ class RecipeController(
             user
         } else {
             userService.getById(userId)
-                .orElseThrow { ResourceNotFound() }
+                .orElseThrow { ResourceNotFound.user(userId) }
         }
 
         return if (userId == null) {
@@ -95,7 +95,7 @@ class RecipeController(
             user
         } else {
             userService.getById(userId)
-                .orElseThrow { ResourceNotFound() }
+                .orElseThrow { ResourceNotFound.user(userId) }
         }
 
         return if (userId == null) {
@@ -116,7 +116,7 @@ class RecipeController(
         return recipeService.getById(id)
             .filter { user.canRead(it) }
             .map(mapper::toDto)
-            .orElseThrow { ResourceNotFound() }
+            .orElseThrow { ResourceNotFound.recipe(id) }
     }
 
     @RequiresAuthentication
@@ -146,7 +146,7 @@ class RecipeController(
         val recipe = recipeService.getById(id)
             .filter { user.canWrite(it) }
             .map { mapper.toEntity(request, it) }
-            .orElseThrow { ResourceNotFound() }
+            .orElseThrow { ResourceNotFound.recipe(id) }
 
         recipeService.save(recipe)
 
@@ -165,7 +165,7 @@ class RecipeController(
         val recipe = recipeService.getById(id)
             .filter { user.canWrite(it) }
             .map { mapper.toEntity(request, it) }
-            .orElseThrow { ResourceNotFound() }
+            .orElseThrow { ResourceNotFound.recipe(id) }
 
         recipeService.save(recipe)
 

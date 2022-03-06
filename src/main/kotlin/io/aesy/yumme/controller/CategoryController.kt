@@ -71,7 +71,7 @@ class CategoryController(
     ): List<CategoryDto> {
         val recipe = recipeService.getById(id)
             .filter { user.canRead(it) }
-            .orElseThrow { ResourceNotFound() }
+            .orElseThrow { ResourceNotFound.recipe(id) }
 
         return categoryService.getAllByRecipe(recipe)
             .map(mapper::toDto)

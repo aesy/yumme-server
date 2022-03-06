@@ -52,7 +52,7 @@ class UserController(
         @PathVariable("id") id: Long,
     ): UserDto {
         val user = users.getById(id)
-            .orElseThrow { ResourceNotFound() }
+            .orElseThrow { ResourceNotFound.user(id) }
 
         return mapper.toDto(user)
     }
