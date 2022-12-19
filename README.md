@@ -4,7 +4,7 @@
 [![Coverage Status][codecov-image]][codecov-url]
 [![MIT license][license-image]][license-url]
 
-[github-actions-image]: https://img.shields.io/github/workflow/status/aesy/yumme-server/Continous%20Integration?style=flat-square
+[github-actions-image]: https://img.shields.io/github/actions/workflow/status/aesy/yumme-server/ci.yml?branch=master&style=flat-square
 [github-actions-url]: https://github.com/aesy/yumme-server/actions
 
 [codecov-image]: https://img.shields.io/codecov/c/github/aesy/yumme-server?style=flat-square
